@@ -23,7 +23,7 @@ export class SpriteLoader {
     }
 
     // Start loading
-    const promise = new Promise<HTMLImageElement>((resolve, reject) => {
+    const promise = new Promise<HTMLImageElement>((resolve) => {
       const img = new Image();
 
       img.onload = () => {

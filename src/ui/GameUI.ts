@@ -8,15 +8,13 @@ import { GAME_CONFIG, COLORS } from '../utils/constants';
  */
 export class GameUI {
   private game: Game;
-  private canvas: HTMLCanvasElement;
   private container: HTMLDivElement;
   private scoreDisplay: ScoreDisplay;
   private modal: Modal;
   private dangerLineEl: HTMLDivElement | null = null;
 
-  constructor(game: Game, canvas: HTMLCanvasElement) {
+  constructor(game: Game, _canvas: HTMLCanvasElement) {
     this.game = game;
-    this.canvas = canvas;
     this.container = this.createContainer();
     this.scoreDisplay = new ScoreDisplay(this.container);
     this.modal = new Modal();

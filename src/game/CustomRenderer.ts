@@ -8,14 +8,12 @@ import { Theme } from '../progression/themes';
  * Overlays on top of Matter.js physics rendering
  */
 export class CustomRenderer {
-  private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private engine: Matter.Engine;
   private currentTheme: Theme | null = null;
   private useSprites: boolean = false;
 
   constructor(canvas: HTMLCanvasElement, engine: Matter.Engine) {
-    this.canvas = canvas;
     this.ctx = canvas.getContext('2d')!;
     this.engine = engine;
   }

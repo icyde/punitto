@@ -4,7 +4,7 @@ import { Container } from '../entities/Container';
 import { AnimalManager } from './AnimalManager';
 import { Animal } from '../entities/Animal';
 import { ScoreManager } from './ScoreManager';
-import { GAME_CONFIG, BIG_FLOOF_DISAPPEAR_SCORE } from '../utils/constants';
+import { GAME_CONFIG } from '../utils/constants';
 
 /**
  * Main game controller
@@ -20,7 +20,6 @@ export class Game {
   private mergePairs: Set<string> = new Set(); // Track merges in progress
 
   // Danger line tracking
-  private dangerTimer: number | null = null;
   private dangerStartTime: number | null = null;
   private isInDanger: boolean = false;
   private gameOverCallback: (() => void) | null = null;

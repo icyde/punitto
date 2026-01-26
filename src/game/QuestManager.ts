@@ -1,5 +1,5 @@
 import { Quest, getRandomDailyQuest, getQuestById } from '../progression/quests';
-import { Achievement, ACHIEVEMENTS, getAchievementById } from '../progression/achievements';
+import { Achievement, ACHIEVEMENTS } from '../progression/achievements';
 import { GameStats } from './StatsTracker';
 import { saveToStorage, loadFromStorage, STORAGE_KEYS } from '../utils/storage';
 
@@ -114,7 +114,7 @@ export class QuestManager {
   /**
    * Update quest progress based on game stats
    */
-  updateQuestProgress(stats: GameStats, sessionData: {
+  updateQuestProgress(_stats: GameStats, sessionData: {
     mergesThisGame: number;
     scoreThisGame: number;
     animalsCreatedThisGame: Record<number, number>;

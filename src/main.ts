@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initialize game and UI
   const game = new Game(canvas);
-  const gameUI = new GameUI(game, canvas);
+  new GameUI(game, canvas);
 
   // Start the game
   game.start();

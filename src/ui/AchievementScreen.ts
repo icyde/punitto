@@ -1,5 +1,4 @@
 import { QuestManager } from '../game/QuestManager';
-import { ACHIEVEMENTS } from '../progression/achievements';
 
 /**
  * Achievement screen UI

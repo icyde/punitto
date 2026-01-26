@@ -85,7 +85,7 @@ export class AudioManager {
     const clone = sound.cloneNode() as HTMLAudioElement;
     clone.volume = 0.7;
 
-    clone.play().catch(err => {
+    clone.play().catch(() => {
       // Silently fail (user interaction may be required)
     });
   }
@@ -147,7 +147,7 @@ export class AudioManager {
   startMusic(): void {
     if (!this.settings.musicEnabled || !this.music) return;
 
-    this.music.play().catch(err => {
+    this.music.play().catch(() => {
       console.log('Music autoplay prevented. User interaction required.');
     });
   }
