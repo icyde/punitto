@@ -39,6 +39,33 @@ Style: Underwater creatures with soft, dreamy aesthetic.
 6. `/src/assets/images/oceanDreams/orca.png`
 7. `/src/assets/images/oceanDreams/oceanSpirit.png`
 
+prompt:
+tier 1 hamster: {
+
+"action": "image_generation",
+
+"action_input": "{ "prompt": "A high-quality 2D kawaii asset of a tiny round peach and pink hamster. Sanrio-inspired style, perfectly spherical body shape, ultra-cute with big sparkly eyes and white highlights, tiny pink blush circles on cheeks. Soft peach and cream gradient fur. Simple features, small ears. Isolated on a solid white background for easy transparency removal. 512x512px, clean vector art style, thick rounded sticker-like outline, no background details.", "aspect_ratio": "1:1" }"
+
+}
+
+🐱 Tier 2: Cat
+Prompt: A high-quality 2D kawaii asset of an adorable white and calico cat. Sanrio-inspired style, perfectly spherical body shape, ultra-cute with big sparkly eyes and white highlights, tiny pink blush circles on cheeks. Soft white and pink gradient fur with simple calico spots. Simple features, small triangle ears, and tiny whiskers. Isolated on a solid white background. 512x512px, clean vector art style, thick rounded sticker-like outline.
+
+🐕 Tier 3: Shiba
+Prompt: A high-quality 2D kawaii asset of an orange and cream Shiba Inu dog. Sanrio-inspired style, perfectly spherical body shape, ultra-cute with big sparkly eyes and white highlights, tiny pink blush circles on cheeks. Soft orange and cream gradient fur. Simple features, perky ears, and a classic doge smile. Isolated on a solid white background. 512x512px, clean vector art style, thick rounded sticker-like outline.
+
+🐶 Tier 4: Westie
+Prompt: A high-quality 2D kawaii asset of a fluffy white West Highland Terrier. Sanrio-inspired style, perfectly spherical body shape, ultra-cute with big sparkly eyes and white highlights, tiny pink blush circles on cheeks. Pure white and cream gradient fur with a subtle fluffy texture. Simple features, perky triangle ears, and a black button nose. Isolated on a solid white background. 512x512px, clean vector art style, thick rounded sticker-like outline.
+
+🐺 Tier 5: Husky
+Prompt: A high-quality 2D kawaii asset of a grey and white husky dog. Sanrio-inspired style, perfectly spherical body shape, ultra-cute with bright blue sparkly eyes and white highlights, tiny pink blush circles on cheeks. Soft grey and white gradient fur with distinct, cute face markings. Simple features, fluffy cheeks, and pointed ears. Isolated on a solid white background. 512x512px, clean vector art style, thick rounded sticker-like outline.
+
+☁️ Tier 6: Samoyed
+Prompt: A high-quality 2D kawaii asset of a massive fluffy white Samoyed dog. Sanrio-inspired style, perfectly spherical body shape, ultra-cute with big sparkly eyes and white highlights, tiny pink blush circles on cheeks. Cloud-like pure white gradient fur with extra fluff. Simple features, a constant happy smile, and small ears. Isolated on a solid white background. 512x512px, clean vector art style, thick rounded sticker-like outline.
+
+✨ Tier 7: Big Floof
+Prompt: A high-quality 2D kawaii asset of a magical ultimate floof ball. Sanrio-inspired style, perfectly spherical body shape, ultra-cute with big sparkly eyes and white highlights, tiny pink blush circles on cheeks. Shimmering rainbow pastel gradient fur with a maximum fluffy cloud texture. Small magical sparkle and heart particles surrounding the body. Isolated on a solid white background. 512x512px, clean vector art style, thick rounded sticker-like outline.
+
 ## Audio Assets (Phase 7)
 
 ### Sound Effects
