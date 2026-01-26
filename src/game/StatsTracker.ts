@@ -1,0 +1,146 @@
+import { saveToStorage, loadFromStorage, STORAGE_KEYS } from '../utils/storage';
+
+/**
+ * Statistics tracking across all games
+ */
+export interface GameStats {
+  gamesPlayed: number;
+  totalMerges: number;
+  animalsCreated: Record<number, number>; // Tier -> count
+  highestTierReached: number;
+  chainReactions: number;
+  bigFloofsMerged: number;
+  totalScore: number;
+  lastPlayedDate: string;
+}
+
+/**
+ * Tracks cumulative game statistics
+ */
+export class StatsTracker {
+  private stats: GameStats;
+
+  constructor() {
+    this.stats = this.loadStats();
+  }
+
+  /**
+   * Load stats from storage
+   */
+  private loadStats(): GameStats {
+    return loadFromStorage<GameStats>(STORAGE_KEYS.STATS, {
+      gamesPlayed: 0,
+      totalMerges: 0,
+      animalsCreated: {},
+      highestTierReached: 0,
+      chainReactions: 0,
+      bigFloofsMerged: 0,
+      totalScore: 0,
+      lastPlayedDate: new Date().toISOString()
+    });
+  }
+
+  /**
+   * Save stats to storage
+   */
+  private saveStats(): void {
+    saveToStorage(STORAGE_KEYS.STATS, this.stats);
+  }
+
+  /**
+   * Increment games played
+   */
+  recordGamePlayed(): void {
+    this.stats.gamesPlayed++;
+    this.stats.lastPlayedDate = new Date().toISOString();
+    this.saveStats();
+  }
+
+  /**
+   * Record a merge
+   */
+  recordMerge(tier: number): void {
+    this.stats.totalMerges++;
+
+    // Update highest tier reached
+    const newTier = tier + 1;
+    if (newTier > this.stats.highestTierReached) {
+      this.stats.highestTierReached = newTier;
+    }
+
+    this.saveStats();
+  }
+
+  /**
+   * Record an animal created
+   */
+  recordAnimalCreated(tier: number): void {
+    if (!this.stats.animalsCreated[tier]) {
+      this.stats.animalsCreated[tier] = 0;
+    }
+    this.stats.animalsCreated[tier]++;
+    this.saveStats();
+  }
+
+  /**
+   * Record a chain reaction
+   */
+  recordChainReaction(): void {
+    this.stats.chainReactions++;
+    this.saveStats();
+  }
+
+  /**
+   * Record Big Floof merge
+   */
+  recordBigFloofMerge(): void {
+    this.stats.bigFloofsMerged++;
+    this.saveStats();
+  }
+
+  /**
+   * Record score
+   */
+  recordScore(score: number): void {
+    this.stats.totalScore += score;
+    this.saveStats();
+  }
+
+  /**
+   * Get current stats
+   */
+  getStats(): Readonly<GameStats> {
+    return { ...this.stats };
+  }
+
+  /**
+   * Get animals created count for a specific tier
+   */
+  getAnimalsCreatedForTier(tier: number): number {
+    return this.stats.animalsCreated[tier] || 0;
+  }
+
+  /**
+   * Get total animals created
+   */
+  getTotalAnimalsCreated(): number {
+    return Object.values(this.stats.animalsCreated).reduce((sum, count) => sum + count, 0);
+  }
+
+  /**
+   * Reset all stats (for testing or reset functionality)
+   */
+  resetStats(): void {
+    this.stats = {
+      gamesPlayed: 0,
+      totalMerges: 0,
+      animalsCreated: {},
+      highestTierReached: 0,
+      chainReactions: 0,
+      bigFloofsMerged: 0,
+      totalScore: 0,
+      lastPlayedDate: new Date().toISOString()
+    };
+    this.saveStats();
+  }
+}
