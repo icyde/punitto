@@ -2,6 +2,7 @@ import { ScoreDisplay } from './ScoreDisplay';
 import { Modal } from './Modal';
 import { Game } from '../game/Game';
 import { GAME_CONFIG, COLORS } from '../utils/constants';
+import { spriteLoader } from '../game/SpriteLoader';
 
 /**
  * Main game UI overlay manager
@@ -12,6 +13,9 @@ export class GameUI {
   private scoreDisplay: ScoreDisplay;
   private modal: Modal;
   private dangerLineEl: HTMLDivElement | null = null;
+  private previewEl: HTMLDivElement | null = null;
+  private previewImgEl: HTMLImageElement | null = null;
+  private lastPreviewTier: number = -1;
 
   constructor(game: Game, _canvas: HTMLCanvasElement) {
     this.game = game;
@@ -21,6 +25,7 @@ export class GameUI {
 
     this.setupGameOverCallback();
     this.createDangerLine();
+    this.createPreview();
     this.startUpdateLoop();
   }
 
@@ -67,6 +72,52 @@ export class GameUI {
     `;
 
     this.container.appendChild(this.dangerLineEl);
+  }
+
+  /**
+   * Create next animal preview
+   */
+  private createPreview(): void {
+    this.previewEl = document.createElement('div');
+    this.previewEl.className = 'next-preview';
+    this.previewEl.style.cssText = `
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 70px;
+      height: 90px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      border: 2px solid #FFB6C1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      pointer-events: none;
+    `;
+
+    const label = document.createElement('div');
+    label.textContent = 'NEXT';
+    label.style.cssText = `
+      font-size: 10px;
+      font-weight: bold;
+      color: #5A4A42;
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+    `;
+
+    this.previewImgEl = document.createElement('img');
+    this.previewImgEl.style.cssText = `
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    `;
+
+    this.previewEl.appendChild(label);
+    this.previewEl.appendChild(this.previewImgEl);
+    this.container.appendChild(this.previewEl);
   }
 
   /**
@@ -118,6 +169,34 @@ export class GameUI {
         this.dangerLineEl.style.opacity = '0.5';
         this.dangerLineEl.style.height = '2px';
       }
+    }
+
+    // Update next animal preview
+    this.updatePreview();
+  }
+
+  /**
+   * Update the next animal preview
+   */
+  private updatePreview(): void {
+    if (!this.previewImgEl) return;
+
+    const nextTier = this.game.getNextAnimalTier();
+
+    // Only update if tier changed
+    if (nextTier === this.lastPreviewTier) return;
+    this.lastPreviewTier = nextTier;
+
+    const theme = this.game.getThemeManager().getActiveTheme();
+    const themeAnimal = theme.animals[nextTier];
+    if (!themeAnimal) return;
+
+    const sprite = spriteLoader.getSprite(themeAnimal.spritePath);
+    if (sprite && sprite.complete) {
+      this.previewImgEl.src = sprite.src;
+    } else {
+      // Sprite not loaded yet, use path directly
+      this.previewImgEl.src = themeAnimal.spritePath;
     }
   }
 }

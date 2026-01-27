@@ -25,7 +25,7 @@ export class Animal {
       density: 0.001,
       label: `animal-tier${tier}`,
       render: {
-        fillStyle: this.tierData.color
+        fillStyle: 'transparent' // Hidden - CustomRenderer draws sprites on top
       }
     });
 

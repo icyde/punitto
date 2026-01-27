@@ -71,7 +71,13 @@ export class CustomRenderer {
     this.ctx.translate(pos.x, pos.y);
     this.ctx.rotate(body.angle);
 
-    // Draw sprite centered
+    // Create circular clipping path to hide background
+    this.ctx.beginPath();
+    this.ctx.arc(0, 0, radius, 0, Math.PI * 2);
+    this.ctx.closePath();
+    this.ctx.clip();
+
+    // Draw sprite centered (clipped to circle)
     this.ctx.drawImage(
       sprite,
       -radius,

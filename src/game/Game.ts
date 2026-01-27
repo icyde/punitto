@@ -371,4 +371,11 @@ export class Game {
     const elapsed = Date.now() - this.dangerStartTime;
     return Math.min(elapsed / GAME_CONFIG.DANGER_TIME_THRESHOLD, 1);
   }
+
+  /**
+   * Get theme manager
+   */
+  getThemeManager(): ThemeManager {
+    return this.themeManager;
+  }
 }
