@@ -21,7 +21,7 @@ A physics-based merge puzzle game where players drop spherical animals from the 
 3. **Shiba** - Orange/cream, classic doge face
 4. **Westie** - Pure white, perky ears, fluffy
 5. **Husky** - Grey/white with blue eyes
-6. **Samoyed** - Pure white, fluffy cloud
+6. **Golden** - Golden Retriever, fluffy and friendly
 7. **Big Floof** (Largest) - Ultimate fluff ball (rainbow pastel shimmer)
 
 **Special Rule:** When two Big Floofs merge, they disappear from the container with a magical sparkle effect and award massive bonus points, creating valuable space.
@@ -56,7 +56,7 @@ A physics-based merge puzzle game where players drop spherical animals from the 
   - Shiba merge: 50 points
   - Westie merge: 100 points
   - Husky merge: 200 points
-  - Samoyed merge: 500 points
+  - Golden merge: 500 points
   - Big Floof merge: 1000 points
   - Big Floof disappears: 2500 bonus points
 - **Score Display:** Continuously visible during gameplay
@@ -343,7 +343,7 @@ Quests give players short and long-term goals beyond high scores, creating engag
 - "Fluffy Focus" - Create 3 Westies in one game
 - "Chain Master" - Trigger a 3-merge chain reaction
 - "High Achiever" - Score 5000+ points
-- "Dog Lover" - Create one of each dog type in one game (Shiba, Westie, Husky, Samoyed)
+- "Dog Lover" - Create one of each dog type in one game (Shiba, Westie, Husky, Golden)
 
 *Hard (Per-Game):*
 - "Perfection" - Trigger a 5+ merge chain reaction
@@ -831,7 +831,7 @@ These can be added after the core game is complete and tested:
 - Color: Grey/white with blue eyes (#A9A9A9)
 - Features: Fluffy, distinct face markings
 
-**Tier 6 - Samoyed:**
+**Tier 6 - Golden:**
 - Size multiplier: 3x
 - Color: Pure white (#FFFFFF)
 - Features: Ultra fluffy, constant smile, cloud-like

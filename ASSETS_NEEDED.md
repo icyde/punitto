@@ -14,7 +14,7 @@ Style: Kawaii/Sanrio-inspired with big eyes, blush cheeks, soft gradients.
 3. `/src/assets/images/pastelPaws/shiba.png` - Shiba Inu dog
 4. `/src/assets/images/pastelPaws/westie.png` - West Highland Terrier
 5. `/src/assets/images/pastelPaws/husky.png` - Husky dog (larger)
-6. `/src/assets/images/pastelPaws/samoyed.png` - Fluffy Samoyed (even larger)
+6. `/src/assets/images/pastelPaws/golden.png` - Fluffy Golden Retriever (even larger)
 7. `/src/assets/images/pastelPaws/bigFloof.png` - Magical ultimate floof (largest)
 
 **Size scaling reference:**
@@ -23,7 +23,7 @@ Style: Kawaii/Sanrio-inspired with big eyes, blush cheeks, soft gradients.
 - Shiba: 1.6x
 - Westie: 2.0x
 - Husky: 2.5x
-- Samoyed: 3.0x
+- Golden: 3.0x
 - Big Floof: 3.5x
 
 ### Ocean Dreams Theme (Priority: Medium)
@@ -60,8 +60,8 @@ Prompt: A high-quality 2D kawaii asset of a fluffy white West Highland Terrier. 
 🐺 Tier 5: Husky
 Prompt: A high-quality 2D kawaii asset of a grey and white husky dog. Sanrio-inspired style, perfectly spherical body shape, ultra-cute with bright blue sparkly eyes and white highlights, tiny pink blush circles on cheeks. Soft grey and white gradient fur with distinct, cute face markings. Simple features, fluffy cheeks, and pointed ears. Isolated on a solid white background. 512x512px, clean vector art style, thick rounded sticker-like outline.
 
-☁️ Tier 6: Samoyed
-Prompt: A high-quality 2D kawaii asset of a massive fluffy white Samoyed dog. Sanrio-inspired style, perfectly spherical body shape, ultra-cute with big sparkly eyes and white highlights, tiny pink blush circles on cheeks. Cloud-like pure white gradient fur with extra fluff. Simple features, a constant happy smile, and small ears. Isolated on a solid white background. 512x512px, clean vector art style, thick rounded sticker-like outline.
+☁️ Tier 6: Golden
+Prompt: A high-quality 2D kawaii asset of a massive fluffy white Golden dog. Sanrio-inspired style, perfectly spherical body shape, ultra-cute with big sparkly eyes and white highlights, tiny pink blush circles on cheeks. Cloud-like pure white gradient fur with extra fluff. Simple features, a constant happy smile, and small ears. Isolated on a solid white background. 512x512px, clean vector art style, thick rounded sticker-like outline.
 
 ✨ Tier 7: Big Floof
 Prompt: A high-quality 2D kawaii asset of a magical ultimate floof ball. Sanrio-inspired style, perfectly spherical body shape, ultra-cute with big sparkly eyes and white highlights, tiny pink blush circles on cheeks. Shimmering rainbow pastel gradient fur with a maximum fluffy cloud texture. Small magical sparkle and heart particles surrounding the body. Isolated on a solid white background. 512x512px, clean vector art style, thick rounded sticker-like outline.

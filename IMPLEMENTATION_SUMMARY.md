@@ -142,7 +142,7 @@
 
 ### Images (Priority: High)
 - **Pastel Paws**: 7 kawaii animal sprites (512x512 PNG)
-  - Hamster, Cat, Shiba, Westie, Husky, Samoyed, Big Floof
+  - Hamster, Cat, Shiba, Westie, Husky, Golden, Big Floof
 - **Ocean Dreams**: 7 ocean creature sprites (512x512 PNG)
   - Seahorse, Jellyfish, Clownfish, Pufferfish, Dolphin, Orca, Ocean Spirit
 

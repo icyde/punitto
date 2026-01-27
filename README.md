@@ -4,7 +4,7 @@ A mobile-first physics-based merge puzzle game with cute animals, quest system, 
 
 ## Features
 
-- **7-Tier Animal System**: Merge identical animals to create bigger ones (Hamster → Cat → Shiba → Westie → Husky → Samoyed → Big Floof)
+- **7-Tier Animal System**: Merge identical animals to create bigger ones (Hamster → Cat → Shiba → Westie → Husky → Golden → Big Floof)
 - **Physics-Based Gameplay**: Realistic physics powered by Matter.js
 - **Quest System**: Daily quests and lifetime achievements
 - **Theme System**: Unlock new themes (Pastel Paws, Ocean Dreams) by earning stars

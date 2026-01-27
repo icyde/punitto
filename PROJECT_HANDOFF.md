@@ -118,7 +118,7 @@ You can upload the project files to these platforms and run them there.
 ### Core Gameplay
 1. **Drop Animals**: Click/tap anywhere to drop cute animals
 2. **Merge**: Two identical animals touching = merge into bigger animal
-3. **7 Tiers**: Hamster → Cat → Shiba → Westie → Husky → Samoyed → Big Floof
+3. **7 Tiers**: Hamster → Cat → Shiba → Westie → Husky → Golden → Big Floof
 4. **Scoring**: Earn points for each merge
 5. **Danger Line**: Don't let animals stay above red line for 3+ seconds
 6. **Game Over**: Exceeding danger time triggers game over modal

@@ -38,7 +38,7 @@ export const PASTEL_PAWS_THEME: Theme = {
     { tier: 2, name: 'Shiba', spritePath: '/assets/images/pastelPaws/shiba.png' },
     { tier: 3, name: 'Westie', spritePath: '/assets/images/pastelPaws/westie.png' },
     { tier: 4, name: 'Husky', spritePath: '/assets/images/pastelPaws/husky.png' },
-    { tier: 5, name: 'Samoyed', spritePath: '/assets/images/pastelPaws/samoyed.png' },
+    { tier: 5, name: 'Golden', spritePath: '/assets/images/pastelPaws/golden.png' },
     { tier: 6, name: 'Big Floof', spritePath: '/assets/images/pastelPaws/bigFloof.png' }
   ],
   colors: {

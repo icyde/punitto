@@ -34,7 +34,7 @@ The game uses a **Manager Pattern** architecture where `Game.ts` orchestrates al
 ### Animal System (7 Tiers)
 Defined in `src/utils/constants.ts`:
 - Tier 0-3: **Spawnable** (Hamster, Cat, Shiba, Westie) - weighted random spawn
-- Tier 4-5: **Mergeable only** (Husky, Samoyed)
+- Tier 4-5: **Mergeable only** (Husky, Golden)
 - Tier 6: **Big Floof** - special behavior: two merge → disappear (clears space, awards 2500 points)
 
 Each tier has:

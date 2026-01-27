@@ -71,10 +71,10 @@ export const ANIMAL_TIERS: AnimalTier[] = [
   },
   {
     id: 5,
-    name: 'Samoyed',
+    name: 'Golden',
     scale: 3.0,
     baseRadius: 20,
-    color: '#DDA0DD', // Plum
+    color: '#DAA520', // Golden rod
     score: 500
   },
   {
@@ -94,7 +94,7 @@ export const SPAWN_WEIGHTS = {
   2: 20, // Shiba - 20%
   3: 10, // Westie - 10%
   4: 0,  // Husky - not spawnable
-  5: 0,  // Samoyed - not spawnable
+  5: 0,  // Golden - not spawnable
   6: 0   // Big Floof - not spawnable
 };
 
