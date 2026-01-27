@@ -33,13 +33,13 @@ export const PASTEL_PAWS_THEME: Theme = {
   description: 'Cute kawaii animals in soft pastel colors',
   unlockRequirement: 0,
   animals: [
-    { tier: 0, name: 'Hamster', spritePath: '/src/assets/images/pastelPaws/hamster.png' },
-    { tier: 1, name: 'Cat', spritePath: '/src/assets/images/pastelPaws/cat.png' },
-    { tier: 2, name: 'Shiba', spritePath: '/src/assets/images/pastelPaws/shiba.png' },
-    { tier: 3, name: 'Westie', spritePath: '/src/assets/images/pastelPaws/westie.png' },
-    { tier: 4, name: 'Husky', spritePath: '/src/assets/images/pastelPaws/husky.png' },
-    { tier: 5, name: 'Samoyed', spritePath: '/src/assets/images/pastelPaws/samoyed.png' },
-    { tier: 6, name: 'Big Floof', spritePath: '/src/assets/images/pastelPaws/bigFloof.png' }
+    { tier: 0, name: 'Hamster', spritePath: '/assets/images/pastelPaws/hamster.png' },
+    { tier: 1, name: 'Cat', spritePath: '/assets/images/pastelPaws/cat.png' },
+    { tier: 2, name: 'Shiba', spritePath: '/assets/images/pastelPaws/shiba.png' },
+    { tier: 3, name: 'Westie', spritePath: '/assets/images/pastelPaws/westie.png' },
+    { tier: 4, name: 'Husky', spritePath: '/assets/images/pastelPaws/husky.png' },
+    { tier: 5, name: 'Samoyed', spritePath: '/assets/images/pastelPaws/samoyed.png' },
+    { tier: 6, name: 'Big Floof', spritePath: '/assets/images/pastelPaws/bigFloof.png' }
   ],
   colors: {
     containerBg: 'linear-gradient(180deg, #FFF8F0 0%, #FFE4E1 100%)',
@@ -57,13 +57,13 @@ export const OCEAN_DREAMS_THEME: Theme = {
   description: 'Magical underwater creatures in ocean blues',
   unlockRequirement: 10,
   animals: [
-    { tier: 0, name: 'Seahorse', spritePath: '/src/assets/images/oceanDreams/seahorse.png' },
-    { tier: 1, name: 'Jellyfish', spritePath: '/src/assets/images/oceanDreams/jellyfish.png' },
-    { tier: 2, name: 'Clownfish', spritePath: '/src/assets/images/oceanDreams/clownfish.png' },
-    { tier: 3, name: 'Pufferfish', spritePath: '/src/assets/images/oceanDreams/pufferfish.png' },
-    { tier: 4, name: 'Dolphin', spritePath: '/src/assets/images/oceanDreams/dolphin.png' },
-    { tier: 5, name: 'Orca', spritePath: '/src/assets/images/oceanDreams/orca.png' },
-    { tier: 6, name: 'Ocean Spirit', spritePath: '/src/assets/images/oceanDreams/oceanSpirit.png' }
+    { tier: 0, name: 'Seahorse', spritePath: '/assets/images/oceanDreams/seahorse.png' },
+    { tier: 1, name: 'Jellyfish', spritePath: '/assets/images/oceanDreams/jellyfish.png' },
+    { tier: 2, name: 'Clownfish', spritePath: '/assets/images/oceanDreams/clownfish.png' },
+    { tier: 3, name: 'Pufferfish', spritePath: '/assets/images/oceanDreams/pufferfish.png' },
+    { tier: 4, name: 'Dolphin', spritePath: '/assets/images/oceanDreams/dolphin.png' },
+    { tier: 5, name: 'Orca', spritePath: '/assets/images/oceanDreams/orca.png' },
+    { tier: 6, name: 'Ocean Spirit', spritePath: '/assets/images/oceanDreams/oceanSpirit.png' }
   ],
   colors: {
     containerBg: 'linear-gradient(180deg, #B4E7FF 0%, #6BB6D6 100%)',
