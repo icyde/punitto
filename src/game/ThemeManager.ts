@@ -11,14 +11,7 @@ export class ThemeManager {
   private onThemeUnlocked: ((theme: Theme) => void) | null = null;
 
   constructor() {
-    this.loadState();
-    this.activeTheme = this.loadActiveTheme();
-  }
-
-  /**
-   * Load theme state from storage
-   */
-  private loadState(): void {
+    // Load unlocked themes first
     const unlocked = loadFromStorage<string[]>(STORAGE_KEYS.UNLOCKED_THEMES, []);
     this.unlockedThemes = new Set(unlocked);
 
@@ -26,6 +19,10 @@ export class ThemeManager {
     const defaultTheme = getDefaultTheme();
     this.unlockedThemes.add(defaultTheme.id);
 
+    // Now load active theme (needs unlockedThemes to be set)
+    this.activeTheme = this.loadActiveTheme();
+
+    // Save state
     this.saveState();
   }
 
