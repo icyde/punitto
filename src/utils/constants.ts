@@ -15,8 +15,11 @@ export const GAME_CONFIG = {
   DANGER_TIME_THRESHOLD: 3000, // 3 seconds in milliseconds
 
   // Visual/physics alignment
-  ANIMAL_HITBOX_SCALE: 0.85, // Match hitbox to sprite size
-  ANIMAL_SPRITE_SCALE: 1.0, // Render sprite to fill hitbox
+  ANIMAL_HITBOX_SCALE: 1.0, // Base physics size multiplier
+  ANIMAL_SPRITE_SCALE: 1.0, // Global sprite size multiplier
+  SPRITE_ALPHA_THRESHOLD: 20, // Alpha cutoff for visible pixels (0-255)
+  SPRITE_SCALE_MIN: 0.85, // Clamp per-sprite auto scale
+  SPRITE_SCALE_MAX: 1.5,
 
   // Queue
   QUEUE_SIZE: 2, // Show next 2 animals

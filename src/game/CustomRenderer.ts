@@ -93,7 +93,7 @@ export class CustomRenderer {
     if (!themeAnimal) return;
 
     const sprite = spriteLoader.getSprite(themeAnimal.spritePath);
-    const spriteScale = GAME_CONFIG.ANIMAL_SPRITE_SCALE;
+    const spriteScale = spriteLoader.getSpriteScale(themeAnimal.spritePath);
     const size = radius * 2 * spriteScale;
 
     this.ctx.save();
@@ -137,9 +137,8 @@ export class CustomRenderer {
 
     const pos = body.position;
     const radius = animal.getRadius();
-    // Draw sprite slightly smaller than physics body so hitbox matches visual better
-    // The sprite's main body should match the physics circle
-    const spriteScale = GAME_CONFIG.ANIMAL_SPRITE_SCALE;
+    // Draw sprite scaled to match its visible content to the physics circle
+    const spriteScale = spriteLoader.getSpriteScale(themeAnimal.spritePath);
     const size = radius * 2 * spriteScale;
 
     // Save context state
