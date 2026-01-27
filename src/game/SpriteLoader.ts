@@ -141,7 +141,9 @@ export class SpriteLoader {
     const data = imageData.data;
     const centerX = width / 2;
     const centerY = height / 2;
-    let maxDistance = 0;
+
+    // Collect all distances of visible pixels
+    const distances: number[] = [];
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
@@ -150,20 +152,26 @@ export class SpriteLoader {
         if (alpha > GAME_CONFIG.SPRITE_ALPHA_THRESHOLD) {
           const dx = x + 0.5 - centerX;
           const dy = y + 0.5 - centerY;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance > maxDistance) {
-            maxDistance = distance;
-          }
+          distances.push(Math.sqrt(dx * dx + dy * dy));
         }
       }
     }
 
-    if (maxDistance <= 0) {
+    if (distances.length === 0) {
+      return GAME_CONFIG.ANIMAL_SPRITE_SCALE;
+    }
+
+    // Use percentile instead of max to ignore outliers (ears, decorations)
+    distances.sort((a, b) => a - b);
+    const percentileIndex = Math.floor(distances.length * GAME_CONFIG.SPRITE_RADIUS_PERCENTILE);
+    const effectiveRadius = distances[Math.min(percentileIndex, distances.length - 1)] ?? 0;
+
+    if (effectiveRadius <= 0) {
       return GAME_CONFIG.ANIMAL_SPRITE_SCALE;
     }
 
     const targetRadius = Math.min(width, height) / 2;
-    const rawScale = (targetRadius / maxDistance) * GAME_CONFIG.ANIMAL_SPRITE_SCALE;
+    const rawScale = (targetRadius / effectiveRadius) * GAME_CONFIG.ANIMAL_SPRITE_SCALE;
 
     return Math.max(
       GAME_CONFIG.SPRITE_SCALE_MIN,

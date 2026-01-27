@@ -20,6 +20,7 @@ export const GAME_CONFIG = {
   SPRITE_ALPHA_THRESHOLD: 20, // Alpha cutoff for visible pixels (0-255)
   SPRITE_SCALE_MIN: 0.85, // Clamp per-sprite auto scale
   SPRITE_SCALE_MAX: 1.5,
+  SPRITE_RADIUS_PERCENTILE: 0.95, // Use 95th percentile of pixel distances (ignores outliers)
 
   // Queue
   QUEUE_SIZE: 2, // Show next 2 animals
