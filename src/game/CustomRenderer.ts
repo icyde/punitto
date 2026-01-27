@@ -24,6 +24,10 @@ export class CustomRenderer {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d')!;
     this.engine = engine;
+
+    // Enable image smoothing for better quality
+    this.ctx.imageSmoothingEnabled = true;
+    this.ctx.imageSmoothingQuality = 'high';
   }
 
   /**
@@ -89,22 +93,22 @@ export class CustomRenderer {
     if (!themeAnimal) return;
 
     const sprite = spriteLoader.getSprite(themeAnimal.spritePath);
+    const spriteScale = 0.85; // Match the scale used in renderAnimal
+    const size = radius * 2 * spriteScale;
 
     this.ctx.save();
     this.ctx.globalAlpha = 0.7;
+    this.ctx.imageSmoothingEnabled = true;
+    this.ctx.imageSmoothingQuality = 'high';
     this.ctx.translate(x, this.dropGuideY);
 
-    // Create circular clipping path
-    this.ctx.beginPath();
-    this.ctx.arc(0, 0, radius, 0, Math.PI * 2);
-    this.ctx.closePath();
-    this.ctx.clip();
-
     if (sprite && sprite.complete) {
-      // Draw sprite
-      this.ctx.drawImage(sprite, -radius, -radius, radius * 2, radius * 2);
+      // Draw sprite (no clipping)
+      this.ctx.drawImage(sprite, -size / 2, -size / 2, size, size);
     } else {
       // Draw colored circle as fallback
+      this.ctx.beginPath();
+      this.ctx.arc(0, 0, radius, 0, Math.PI * 2);
       this.ctx.fillStyle = tierData.color;
       this.ctx.fill();
     }
@@ -133,26 +137,27 @@ export class CustomRenderer {
 
     const pos = body.position;
     const radius = animal.getRadius();
-    const size = radius * 2;
+    // Draw sprite slightly smaller than physics body so hitbox matches visual better
+    // The sprite's main body should match the physics circle
+    const spriteScale = 0.85; // Shrink sprite to fit inside hitbox
+    const size = radius * 2 * spriteScale;
 
     // Save context state
     this.ctx.save();
+
+    // Enable high quality image rendering
+    this.ctx.imageSmoothingEnabled = true;
+    this.ctx.imageSmoothingQuality = 'high';
 
     // Translate to animal position
     this.ctx.translate(pos.x, pos.y);
     this.ctx.rotate(body.angle);
 
-    // Create circular clipping path to hide background
-    this.ctx.beginPath();
-    this.ctx.arc(0, 0, radius, 0, Math.PI * 2);
-    this.ctx.closePath();
-    this.ctx.clip();
-
-    // Draw sprite centered (clipped to circle)
+    // Draw sprite centered (no clipping - show full sprite)
     this.ctx.drawImage(
       sprite,
-      -radius,
-      -radius,
+      -size / 2,
+      -size / 2,
       size,
       size
     );

@@ -28,7 +28,7 @@ export class PhysicsEngine {
 
     this.world = this.engine.world;
 
-    // Create renderer
+    // Create renderer with high DPI support
     this.render = Matter.Render.create({
       canvas: this.canvas,
       engine: this.engine,
@@ -36,7 +36,8 @@ export class PhysicsEngine {
         width: GAME_CONFIG.CONTAINER_WIDTH,
         height: GAME_CONFIG.CONTAINER_HEIGHT,
         wireframes: false,
-        background: '#FFF8F0' // Warm cream background
+        background: '#FFF8F0', // Warm cream background
+        pixelRatio: window.devicePixelRatio || 1 // Fix pixelation on Retina displays
       }
     });
 
