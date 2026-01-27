@@ -1,9 +1,9 @@
 // Game configuration constants
 
 export const GAME_CONFIG = {
-  // Container dimensions (mobile-first)
-  CONTAINER_WIDTH: 375,
-  CONTAINER_HEIGHT: 600,
+  // Container dimensions (mobile-first) - narrower for more challenge
+  CONTAINER_WIDTH: 300,
+  CONTAINER_HEIGHT: 550,
   WALL_THICKNESS: 10,
 
   // Physics

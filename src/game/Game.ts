@@ -108,29 +108,41 @@ export class Game {
    * Set up click/tap input handlers
    */
   private setupInputHandlers(): void {
-    // Handle both mouse and touch events
+    // Mouse: click to drop
     this.canvas.addEventListener('click', (e) => this.handleInput(e));
+
+    // Touch: touchstart shows guide, touchend drops
     this.canvas.addEventListener('touchstart', (e) => {
       e.preventDefault();
-      this.handleTouch(e);
-    });
-
-    // Track cursor position for drop guide
-    this.canvas.addEventListener('mousemove', (e) => {
-      const rect = this.canvas.getBoundingClientRect();
-      this.cursorX = e.clientX - rect.left;
-    });
-    this.canvas.addEventListener('mouseleave', () => {
-      this.cursorX = null;
-    });
-    this.canvas.addEventListener('touchmove', (e) => {
       const rect = this.canvas.getBoundingClientRect();
       const touch = e.touches[0];
       if (touch) {
         this.cursorX = touch.clientX - rect.left;
       }
     });
-    this.canvas.addEventListener('touchend', () => {
+    this.canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      const rect = this.canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      if (touch) {
+        this.cursorX = touch.clientX - rect.left;
+      }
+    });
+    this.canvas.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      // Drop at current cursor position, then clear
+      if (this.isRunning && this.cursorX !== null) {
+        this.spawnAnimal(this.cursorX);
+      }
+      this.cursorX = null;
+    });
+
+    // Mouse: track cursor position for drop guide
+    this.canvas.addEventListener('mousemove', (e) => {
+      const rect = this.canvas.getBoundingClientRect();
+      this.cursorX = e.clientX - rect.left;
+    });
+    this.canvas.addEventListener('mouseleave', () => {
       this.cursorX = null;
     });
   }
@@ -143,21 +155,6 @@ export class Game {
 
     const rect = this.canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
-
-    this.spawnAnimal(x);
-  }
-
-  /**
-   * Handle touch event
-   */
-  private handleTouch(event: TouchEvent): void {
-    if (!this.isRunning) return;
-
-    const rect = this.canvas.getBoundingClientRect();
-    const touch = event.touches[0];
-    if (!touch) return;
-
-    const x = touch.clientX - rect.left;
 
     this.spawnAnimal(x);
   }
