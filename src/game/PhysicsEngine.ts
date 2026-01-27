@@ -1,5 +1,6 @@
 import Matter from 'matter-js';
 import { GAME_CONFIG } from '../utils/constants';
+import { CustomRenderer } from './CustomRenderer';
 
 /**
  * Physics engine wrapper around Matter.js
@@ -11,6 +12,7 @@ export class PhysicsEngine {
   private world: Matter.World;
   private runner: Matter.Runner;
   private canvas: HTMLCanvasElement;
+  private customRenderer: CustomRenderer;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -42,6 +44,14 @@ export class PhysicsEngine {
     this.runner = Matter.Runner.create({
       delta: 1000 / GAME_CONFIG.FPS,
       isFixed: true
+    });
+
+    // Create custom renderer for sprites
+    this.customRenderer = new CustomRenderer(this.canvas, this.engine);
+
+    // Hook into Matter.js render loop to draw sprites on top
+    Matter.Events.on(this.render, 'afterRender', () => {
+      this.customRenderer.render();
     });
   }
 
@@ -106,5 +116,12 @@ export class PhysicsEngine {
    */
   update(deltaTime: number): void {
     Matter.Engine.update(this.engine, deltaTime);
+  }
+
+  /**
+   * Get the custom renderer
+   */
+  getCustomRenderer(): CustomRenderer {
+    return this.customRenderer;
   }
 }

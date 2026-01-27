@@ -4,6 +4,7 @@ import { Container } from '../entities/Container';
 import { AnimalManager } from './AnimalManager';
 import { Animal } from '../entities/Animal';
 import { ScoreManager } from './ScoreManager';
+import { ThemeManager } from './ThemeManager';
 import { GAME_CONFIG } from '../utils/constants';
 
 /**
@@ -15,6 +16,7 @@ export class Game {
   private container: Container;
   private animalManager: AnimalManager;
   private scoreManager: ScoreManager;
+  private themeManager: ThemeManager;
   private canvas: HTMLCanvasElement;
   private isRunning: boolean = false;
   private mergePairs: Set<string> = new Set(); // Track merges in progress
@@ -30,6 +32,7 @@ export class Game {
     this.container = new Container();
     this.animalManager = new AnimalManager(this.physicsEngine);
     this.scoreManager = new ScoreManager();
+    this.themeManager = new ThemeManager();
 
     this.initialize();
   }
@@ -52,6 +55,23 @@ export class Game {
 
     // Set up game loop for danger detection
     this.setupGameLoop();
+
+    // Set up theme and sprite rendering
+    this.setupTheme();
+  }
+
+  /**
+   * Set up theme and load sprites
+   */
+  private async setupTheme(): Promise<void> {
+    // Load sprites for active theme
+    await this.themeManager.preloadActiveTheme();
+
+    // Set theme on custom renderer
+    const activeTheme = this.themeManager.getActiveTheme();
+    this.physicsEngine.getCustomRenderer().setTheme(activeTheme);
+
+    console.log(`🎨 Loaded theme: ${activeTheme.name}`);
   }
 
   /**
