@@ -1,5 +1,5 @@
 import Matter from 'matter-js';
-import { ANIMAL_TIERS, AnimalTier } from '../utils/constants';
+import { ANIMAL_TIERS, AnimalTier, GAME_CONFIG } from '../utils/constants';
 
 /**
  * Animal entity representing a droppable/mergeable circle
@@ -16,7 +16,7 @@ export class Animal {
     this.id = `animal-${Date.now()}-${Math.random()}`;
 
     // Calculate radius based on tier scaling
-    const radius = this.tierData.baseRadius * this.tierData.scale;
+    const radius = this.tierData.baseRadius * this.tierData.scale * GAME_CONFIG.ANIMAL_HITBOX_SCALE;
 
     // Create physics body
     this.body = Matter.Bodies.circle(x, y, radius, {
@@ -58,7 +58,7 @@ export class Animal {
    * Get the radius
    */
   getRadius(): number {
-    return this.tierData.baseRadius * this.tierData.scale;
+    return this.tierData.baseRadius * this.tierData.scale * GAME_CONFIG.ANIMAL_HITBOX_SCALE;
   }
 
   /**

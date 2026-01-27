@@ -14,6 +14,10 @@ export const GAME_CONFIG = {
   DANGER_LINE_Y: 120, // Distance from top of container
   DANGER_TIME_THRESHOLD: 3000, // 3 seconds in milliseconds
 
+  // Visual/physics alignment
+  ANIMAL_HITBOX_SCALE: 0.85, // Match hitbox to sprite size
+  ANIMAL_SPRITE_SCALE: 1.0, // Render sprite to fill hitbox
+
   // Queue
   QUEUE_SIZE: 2, // Show next 2 animals
 };

@@ -2,7 +2,7 @@ import Matter from 'matter-js';
 import { Animal } from '../entities/Animal';
 import { spriteLoader } from './SpriteLoader';
 import { Theme } from '../progression/themes';
-import { ANIMAL_TIERS } from '../utils/constants';
+import { ANIMAL_TIERS, GAME_CONFIG } from '../utils/constants';
 
 /**
  * Custom renderer for drawing sprites on animals
@@ -93,7 +93,7 @@ export class CustomRenderer {
     if (!themeAnimal) return;
 
     const sprite = spriteLoader.getSprite(themeAnimal.spritePath);
-    const spriteScale = 0.85; // Match the scale used in renderAnimal
+    const spriteScale = GAME_CONFIG.ANIMAL_SPRITE_SCALE;
     const size = radius * 2 * spriteScale;
 
     this.ctx.save();
@@ -139,7 +139,7 @@ export class CustomRenderer {
     const radius = animal.getRadius();
     // Draw sprite slightly smaller than physics body so hitbox matches visual better
     // The sprite's main body should match the physics circle
-    const spriteScale = 0.85; // Shrink sprite to fit inside hitbox
+    const spriteScale = GAME_CONFIG.ANIMAL_SPRITE_SCALE;
     const size = radius * 2 * spriteScale;
 
     // Save context state

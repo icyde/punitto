@@ -10,6 +10,10 @@ import { spriteLoader } from '../game/SpriteLoader';
 export class GameUI {
   private game: Game;
   private container: HTMLDivElement;
+  private canvas: HTMLCanvasElement;
+  private appElement: HTMLDivElement | null = null;
+  private scaleX: number = 1;
+  private scaleY: number = 1;
   private scoreDisplay: ScoreDisplay;
   private modal: Modal;
   private dangerLineEl: HTMLDivElement | null = null;
@@ -17,8 +21,9 @@ export class GameUI {
   private previewImgEl: HTMLImageElement | null = null;
   private lastPreviewTier: number = -1;
 
-  constructor(game: Game, _canvas: HTMLCanvasElement) {
+  constructor(game: Game, canvas: HTMLCanvasElement) {
     this.game = game;
+    this.canvas = canvas;
     this.container = this.createContainer();
     this.scoreDisplay = new ScoreDisplay(this.container);
     this.modal = new Modal();
@@ -27,6 +32,8 @@ export class GameUI {
     this.setupMergeCallback();
     this.createDangerLine();
     this.createPreview();
+    this.syncOverlayToCanvas();
+    this.setupResizeListener();
     this.startUpdateLoop();
   }
 
@@ -40,17 +47,61 @@ export class GameUI {
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
       pointer-events: none;
     `;
 
-    const appElement = document.getElementById('app');
-    if (appElement) {
-      appElement.appendChild(container);
+    this.appElement = document.getElementById('app') as HTMLDivElement | null;
+    if (this.appElement) {
+      this.appElement.appendChild(container);
     }
 
     return container;
+  }
+
+  /**
+   * Keep UI overlay aligned to the canvas size/position
+   */
+  private syncOverlayToCanvas(): void {
+    if (!this.appElement) return;
+
+    const canvasRect = this.canvas.getBoundingClientRect();
+    const appRect = this.appElement.getBoundingClientRect();
+
+    const left = canvasRect.left - appRect.left;
+    const top = canvasRect.top - appRect.top;
+
+    this.container.style.left = `${left}px`;
+    this.container.style.top = `${top}px`;
+    this.container.style.width = `${canvasRect.width}px`;
+    this.container.style.height = `${canvasRect.height}px`;
+
+    this.scaleX = canvasRect.width / GAME_CONFIG.CONTAINER_WIDTH;
+    this.scaleY = canvasRect.height / GAME_CONFIG.CONTAINER_HEIGHT;
+
+    this.updateDangerLinePosition();
+  }
+
+  /**
+   * Handle window resize to keep overlay aligned
+   */
+  private setupResizeListener(): void {
+    window.addEventListener('resize', () => {
+      this.syncOverlayToCanvas();
+    });
+  }
+
+  /**
+   * Position the danger line with canvas scaling applied
+   */
+  private updateDangerLinePosition(): void {
+    if (!this.dangerLineEl) return;
+
+    const scaledTop = GAME_CONFIG.DANGER_LINE_Y * this.scaleY;
+    const scaledWidth = GAME_CONFIG.CONTAINER_WIDTH * this.scaleX;
+
+    this.dangerLineEl.style.top = `${scaledTop}px`;
+    this.dangerLineEl.style.width = `${scaledWidth}px`;
+    this.dangerLineEl.style.left = '0px';
   }
 
   /**
@@ -62,8 +113,8 @@ export class GameUI {
     this.dangerLineEl.style.cssText = `
       position: absolute;
       left: 0;
-      top: ${GAME_CONFIG.DANGER_LINE_Y}px;
-      width: ${GAME_CONFIG.CONTAINER_WIDTH}px;
+      top: 0;
+      width: 0;
       height: 2px;
       background: ${COLORS.DANGER_LINE};
       opacity: 0.5;
@@ -73,6 +124,7 @@ export class GameUI {
     `;
 
     this.container.appendChild(this.dangerLineEl);
+    this.updateDangerLinePosition();
   }
 
   /**
@@ -150,13 +202,16 @@ export class GameUI {
    * Show floating score popup
    */
   private showScorePopup(x: number, y: number, score: number): void {
+    const scaledX = x * this.scaleX;
+    const scaledY = y * this.scaleY;
+
     const popup = document.createElement('div');
     popup.className = 'score-popup';
     popup.textContent = `+${score}`;
     popup.style.cssText = `
       position: absolute;
-      left: ${x}px;
-      top: ${y}px;
+      left: ${scaledX}px;
+      top: ${scaledY}px;
       font-size: 20px;
       font-weight: 700;
       color: #FF9EAA;
