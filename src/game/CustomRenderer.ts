@@ -2,7 +2,7 @@ import Matter from 'matter-js';
 import { Animal } from '../entities/Animal';
 import { spriteLoader } from './SpriteLoader';
 import { Theme } from '../progression/themes';
-import { ANIMAL_TIERS, GAME_CONFIG } from '../utils/constants';
+import { ANIMAL_TIERS } from '../utils/constants';
 
 /**
  * Custom renderer for drawing sprites on animals
