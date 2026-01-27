@@ -26,6 +26,10 @@ export class Game {
   private isInDanger: boolean = false;
   private gameOverCallback: (() => void) | null = null;
 
+  // Drop guide tracking
+  private cursorX: number | null = null;
+  private onMergeCallback: ((x: number, y: number, score: number) => void) | null = null;
+
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.physicsEngine = new PhysicsEngine(canvas);
@@ -110,6 +114,25 @@ export class Game {
       e.preventDefault();
       this.handleTouch(e);
     });
+
+    // Track cursor position for drop guide
+    this.canvas.addEventListener('mousemove', (e) => {
+      const rect = this.canvas.getBoundingClientRect();
+      this.cursorX = e.clientX - rect.left;
+    });
+    this.canvas.addEventListener('mouseleave', () => {
+      this.cursorX = null;
+    });
+    this.canvas.addEventListener('touchmove', (e) => {
+      const rect = this.canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      if (touch) {
+        this.cursorX = touch.clientX - rect.left;
+      }
+    });
+    this.canvas.addEventListener('touchend', () => {
+      this.cursorX = null;
+    });
   }
 
   /**
@@ -193,12 +216,20 @@ export class Game {
     this.animalManager.removeAnimal(animalB);
 
     // Award score for merge
-    this.scoreManager.addMergeScore(tier);
+    const score = this.scoreManager.addMergeScore(tier);
+
+    // Trigger merge callback for score popup
+    if (this.onMergeCallback) {
+      this.onMergeCallback(mergeX, mergeY, score);
+    }
 
     // Special case: Big Floof (tier 6) merge - just disappear
     if (tier === 6) {
       console.log('💫 Two Big Floofs merged and disappeared!');
-      this.scoreManager.addBigFloofDisappear();
+      const bonusScore = this.scoreManager.addBigFloofDisappear();
+      if (this.onMergeCallback) {
+        this.onMergeCallback(mergeX, mergeY, bonusScore);
+      }
       return;
     }
 
@@ -377,5 +408,43 @@ export class Game {
    */
   getThemeManager(): ThemeManager {
     return this.themeManager;
+  }
+
+  /**
+   * Get current cursor X position for drop guide
+   */
+  getCursorX(): number | null {
+    return this.cursorX;
+  }
+
+  /**
+   * Get spawn bounds for drop guide
+   */
+  getSpawnBounds(): { minX: number; maxX: number; spawnY: number } {
+    return this.container.getSpawnBounds();
+  }
+
+  /**
+   * Set merge callback for score popups
+   */
+  setOnMergeCallback(callback: (x: number, y: number, score: number) => void): void {
+    this.onMergeCallback = callback;
+  }
+
+  /**
+   * Update drop guide on custom renderer
+   */
+  updateDropGuide(): void {
+    const cursorX = this.cursorX;
+    const bounds = this.container.getSpawnBounds();
+    const nextTier = this.animalManager.getNextTier();
+
+    // Clamp cursor to spawn bounds
+    let clampedX: number | null = null;
+    if (cursorX !== null) {
+      clampedX = Math.max(bounds.minX, Math.min(bounds.maxX, cursorX));
+    }
+
+    this.physicsEngine.getCustomRenderer().setDropGuide(clampedX, bounds.spawnY, nextTier);
   }
 }

@@ -106,5 +106,5 @@ export const COLORS = {
   DANGER_LINE: '#FF6B6B',
   DANGER_LINE_WARNING: '#FF0000',
   CONTAINER_BG: '#FFFFFF',
-  WALL: '#333333'
+  WALL: '#E8D4C4' // Soft cream/beige - aligned with pastel theme
 };

@@ -87,7 +87,7 @@ export class Container {
     return {
       minX: GAME_CONFIG.WALL_THICKNESS + 30, // Add padding for animal radius
       maxX: GAME_CONFIG.CONTAINER_WIDTH - GAME_CONFIG.WALL_THICKNESS - 30,
-      spawnY: 10 // Near top of container
+      spawnY: 50 // Below danger line with room for drop guide preview
     };
   }
 }

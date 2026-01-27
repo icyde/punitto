@@ -542,3 +542,21 @@ button:active {
   font-size: 14px;
   font-weight: 600;
 }
+
+/* Score Popup Animation */
+@keyframes scorePopup {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  20% {
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  40% {
+    transform: translate(-50%, -70%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -150%) scale(0.8);
+  }
+}

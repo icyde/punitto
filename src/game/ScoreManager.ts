@@ -43,10 +43,11 @@ export class ScoreManager {
 
   /**
    * Add points for a merge
+   * @returns The points awarded
    */
-  addMergeScore(tier: number): void {
+  addMergeScore(tier: number): number {
     const tierData = ANIMAL_TIERS[tier];
-    if (!tierData) return;
+    if (!tierData) return 0;
 
     const points = tierData.score;
     this.currentScore += points;
@@ -59,12 +60,14 @@ export class ScoreManager {
     }
 
     console.log(`+${points} points! Total: ${this.currentScore}`);
+    return points;
   }
 
   /**
    * Add points for Big Floof disappear
+   * @returns The bonus points awarded
    */
-  addBigFloofDisappear(): void {
+  addBigFloofDisappear(): number {
     this.currentScore += BIG_FLOOF_DISAPPEAR_SCORE;
 
     // Check for new high score
@@ -75,6 +78,7 @@ export class ScoreManager {
     }
 
     console.log(`+${BIG_FLOOF_DISAPPEAR_SCORE} points (Big Floof!)! Total: ${this.currentScore}`);
+    return BIG_FLOOF_DISAPPEAR_SCORE;
   }
 
   /**

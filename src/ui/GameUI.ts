@@ -24,6 +24,7 @@ export class GameUI {
     this.modal = new Modal();
 
     this.setupGameOverCallback();
+    this.setupMergeCallback();
     this.createDangerLine();
     this.createPreview();
     this.startUpdateLoop();
@@ -137,6 +138,44 @@ export class GameUI {
   }
 
   /**
+   * Set up merge callback for score popups
+   */
+  private setupMergeCallback(): void {
+    this.game.setOnMergeCallback((x, y, score) => {
+      this.showScorePopup(x, y, score);
+    });
+  }
+
+  /**
+   * Show floating score popup
+   */
+  private showScorePopup(x: number, y: number, score: number): void {
+    const popup = document.createElement('div');
+    popup.className = 'score-popup';
+    popup.textContent = `+${score}`;
+    popup.style.cssText = `
+      position: absolute;
+      left: ${x}px;
+      top: ${y}px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #FF9EAA;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      animation: scorePopup 0.8s ease-out forwards;
+      z-index: 100;
+    `;
+
+    this.container.appendChild(popup);
+
+    // Remove after animation
+    setTimeout(() => {
+      popup.remove();
+    }, 800);
+  }
+
+  /**
    * Start UI update loop
    */
   private startUpdateLoop(): void {
@@ -173,6 +212,16 @@ export class GameUI {
 
     // Update next animal preview
     this.updatePreview();
+
+    // Update drop guide
+    this.updateDropGuide();
+  }
+
+  /**
+   * Update drop guide position
+   */
+  private updateDropGuide(): void {
+    this.game.updateDropGuide();
   }
 
   /**
