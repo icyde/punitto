@@ -55,7 +55,7 @@ export class ProgressionWheel {
       // Position in a circle (starting from top, going clockwise)
       // Angle: -90deg puts first item at top, then each item is spaced evenly
       const angle = -90 + (i * 360 / tierCount);
-      const radius = 42; // Distance from center in pixels
+      const radius = 36; // Distance from center in pixels
 
       tierEl.style.setProperty('--angle', `${angle}deg`);
       tierEl.style.setProperty('--radius', `${radius}px`);

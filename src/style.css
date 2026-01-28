@@ -628,6 +628,11 @@ button:active {
   height: 100px;
   pointer-events: none;
   z-index: 10;
+  overflow: visible;
+}
+
+.progression-wheel * {
+  transition: none;
 }
 
 .wheel-center {
@@ -684,19 +689,12 @@ button:active {
   border-radius: 50%;
   border: 2px solid #E8E8E8;
   overflow: hidden;
-  transition: all 0.3s ease;
   z-index: 1;
 }
 
 .wheel-tier.active {
   border-color: #FF9EAA;
   background: rgba(255, 182, 193, 0.3);
-  transform:
-    translate(-50%, -50%)
-    rotate(var(--angle))
-    translateY(calc(-1 * var(--radius)))
-    rotate(calc(-1 * var(--angle)))
-    scale(1.15);
   box-shadow: 0 0 8px rgba(255, 158, 170, 0.5);
 }
 
@@ -730,73 +728,8 @@ button:active {
   }
 }
 
-/* Landscape Orientation Layout */
-@media (orientation: landscape) and (min-width: 600px) {
-  .game-layout {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    height: 100%;
-    padding: 10px;
-  }
-
-  .game-layout .side-panel {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    min-width: 120px;
-  }
-
-  .game-layout .side-panel-left {
-    order: 1;
-  }
-
-  .game-layout .game-canvas-wrapper {
-    order: 2;
-  }
-
-  .game-layout .side-panel-right {
-    order: 3;
-  }
-
-  /* Landscape score display - vertical layout */
-  .game-layout .score-display {
-    position: static;
-    transform: none;
-  }
-
-  .game-layout .score-banner {
-    flex-direction: column;
-  }
-
-  .game-layout .banner-content {
-    flex-direction: column;
-    padding: 16px 12px;
-  }
-
-  .game-layout .banner-decoration {
-    display: none;
-  }
-
-  .game-layout .score-divider {
-    width: 40px;
-    height: 2px;
-    margin: 12px 0;
-  }
-
-  /* Landscape progression wheel - in side panel */
-  .game-layout .progression-wheel {
-    position: static;
-    margin: 0;
-  }
-}
-
-/* Portrait layout adjustments for smaller screens */
-@media (orientation: portrait) and (max-height: 700px) {
+/* Small screen adjustments */
+@media (max-height: 650px) {
   .score-display {
     top: 8px;
   }
@@ -808,25 +741,5 @@ button:active {
   .current-score-value,
   .high-score-value {
     font-size: 16px;
-  }
-
-  .progression-wheel {
-    width: 85px;
-    height: 85px;
-  }
-
-  .wheel-center {
-    width: 42px;
-    height: 52px;
-  }
-
-  .wheel-next-img {
-    width: 30px;
-    height: 30px;
-  }
-
-  .wheel-tier {
-    width: 18px;
-    height: 18px;
   }
 }

@@ -18,8 +18,6 @@ export class GameUI {
   private progressionWheel: ProgressionWheel;
   private modal: Modal;
   private dangerLineEl: HTMLDivElement | null = null;
-  private isLandscape: boolean = false;
-  private landscapeMediaQuery: MediaQueryList;
 
   constructor(game: Game, canvas: HTMLCanvasElement) {
     this.game = game;
@@ -32,20 +30,12 @@ export class GameUI {
     );
     this.modal = new Modal();
 
-    // Set up orientation detection
-    this.landscapeMediaQuery = window.matchMedia(
-      '(orientation: landscape) and (min-width: 600px)'
-    );
-    this.isLandscape = this.landscapeMediaQuery.matches;
-
     this.setupGameOverCallback();
     this.setupMergeCallback();
     this.createDangerLine();
     this.syncOverlayToCanvas();
     this.setupResizeListener();
-    this.setupOrientationListener();
     this.startUpdateLoop();
-    this.updateLayout();
   }
 
   /**
@@ -136,38 +126,6 @@ export class GameUI {
 
     this.container.appendChild(this.dangerLineEl);
     this.updateDangerLinePosition();
-  }
-
-  /**
-   * Set up orientation change listener
-   */
-  private setupOrientationListener(): void {
-    this.landscapeMediaQuery.addEventListener('change', (e) => {
-      this.isLandscape = e.matches;
-      this.updateLayout();
-    });
-  }
-
-  /**
-   * Update layout based on orientation
-   */
-  private updateLayout(): void {
-    if (this.isLandscape) {
-      this.container.classList.add('game-layout');
-      // In landscape, resize canvas to be wider
-      this.canvas.style.width = 'auto';
-      this.canvas.style.height = '90vh';
-      this.canvas.style.maxHeight = '550px';
-    } else {
-      this.container.classList.remove('game-layout');
-      // Reset to portrait sizing
-      this.canvas.style.width = '';
-      this.canvas.style.height = '';
-      this.canvas.style.maxHeight = '';
-    }
-
-    // Re-sync overlay after layout change
-    setTimeout(() => this.syncOverlayToCanvas(), 50);
   }
 
   /**
