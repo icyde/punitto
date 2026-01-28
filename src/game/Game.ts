@@ -280,8 +280,13 @@ export class Game {
     const dangerLineY = this.container.getDangerLineY();
     const animals = this.animalManager.getAllAnimals();
 
-    // Check if any animal is above the danger line
+    // Check if any settled animal is above the danger line
+    // Ignore recently spawned animals (grace period for falling)
     const hasAnimalAboveLine = animals.some(animal => {
+      // Skip animals that were just spawned
+      if (animal.getAge() < GAME_CONFIG.DANGER_GRACE_PERIOD) {
+        return false;
+      }
       const pos = animal.getPosition();
       return pos.y - animal.getRadius() < dangerLineY;
     });

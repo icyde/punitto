@@ -9,11 +9,13 @@ export class Animal {
   private tier: number;
   private tierData: AnimalTier;
   private id: string;
+  private createdAt: number;
 
   constructor(x: number, y: number, tier: number) {
     this.tier = tier;
     this.tierData = ANIMAL_TIERS[tier]!;
     this.id = `animal-${Date.now()}-${Math.random()}`;
+    this.createdAt = Date.now();
 
     // Calculate radius based on tier scaling
     const radius = this.tierData.baseRadius * this.tierData.scale * GAME_CONFIG.ANIMAL_HITBOX_SCALE;
@@ -76,6 +78,13 @@ export class Animal {
    */
   getId(): string {
     return this.id;
+  }
+
+  /**
+   * Get how long this animal has existed (in ms)
+   */
+  getAge(): number {
+    return Date.now() - this.createdAt;
   }
 
   /**

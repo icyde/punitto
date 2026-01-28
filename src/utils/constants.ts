@@ -7,12 +7,13 @@ export const GAME_CONFIG = {
   WALL_THICKNESS: 10,
 
   // Physics
-  GRAVITY: 1.0,
+  GRAVITY: 1.5,
   FPS: 60,
 
   // Danger line
   DANGER_LINE_Y: 120, // Distance from top of container
   DANGER_TIME_THRESHOLD: 3000, // 3 seconds in milliseconds
+  DANGER_GRACE_PERIOD: 1000, // Ignore newly spawned animals for 1 second
 
   // Visual/physics alignment
   ANIMAL_HITBOX_SCALE: 1.0, // Base physics size multiplier
