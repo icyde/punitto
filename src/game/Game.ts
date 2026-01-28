@@ -5,6 +5,7 @@ import { AnimalManager } from './AnimalManager';
 import { Animal } from '../entities/Animal';
 import { ScoreManager } from './ScoreManager';
 import { ThemeManager } from './ThemeManager';
+import { QuestManager } from './QuestManager';
 import { GAME_CONFIG } from '../utils/constants';
 
 /**
@@ -17,6 +18,7 @@ export class Game {
   private animalManager: AnimalManager;
   private scoreManager: ScoreManager;
   private themeManager: ThemeManager;
+  private questManager: QuestManager;
   private canvas: HTMLCanvasElement;
   private isRunning: boolean = false;
   private mergePairs: Set<string> = new Set(); // Track merges in progress
@@ -37,6 +39,7 @@ export class Game {
     this.animalManager = new AnimalManager(this.physicsEngine);
     this.scoreManager = new ScoreManager();
     this.themeManager = new ThemeManager();
+    this.questManager = new QuestManager();
 
     this.initialize();
   }
@@ -410,6 +413,13 @@ export class Game {
    */
   getThemeManager(): ThemeManager {
     return this.themeManager;
+  }
+
+  /**
+   * Get quest manager
+   */
+  getQuestManager(): QuestManager {
+    return this.questManager;
   }
 
   /**

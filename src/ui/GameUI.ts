@@ -1,6 +1,8 @@
 import { ScoreDisplay } from './ScoreDisplay';
 import { ProgressionWheel } from './ProgressionWheel';
 import { Modal } from './Modal';
+import { AchievementScreen } from './AchievementScreen';
+import { ThemeSelector } from './ThemeSelector';
 import { Game } from '../game/Game';
 import { GAME_CONFIG, COLORS } from '../utils/constants';
 
@@ -17,6 +19,8 @@ export class GameUI {
   private scoreDisplay: ScoreDisplay;
   private progressionWheel: ProgressionWheel;
   private modal: Modal;
+  private achievementScreen: AchievementScreen;
+  private themeSelector: ThemeSelector;
   private dangerLineEl: HTMLDivElement | null = null;
 
   constructor(game: Game, canvas: HTMLCanvasElement) {
@@ -30,9 +34,29 @@ export class GameUI {
     );
     this.modal = new Modal();
 
+    // Initialize achievement and theme screens
+    const questManager = this.game.getQuestManager();
+    const themeManager = this.game.getThemeManager();
+    this.achievementScreen = new AchievementScreen(questManager);
+    this.themeSelector = new ThemeSelector(questManager, themeManager.getActiveTheme().id);
+
+    // Wire up theme selector callback
+    this.themeSelector.setOnThemeSelect((theme) => {
+      themeManager.switchTheme(theme);
+      this.progressionWheel.refreshTheme();
+      this.themeSelector.setActiveTheme(theme.id);
+    });
+
+    // Wire up view themes from achievement screen
+    this.achievementScreen.setOnViewThemes(() => {
+      this.achievementScreen.hide();
+      this.themeSelector.show();
+    });
+
     this.setupGameOverCallback();
     this.setupMergeCallback();
     this.createDangerLine();
+    this.createAchievementButton();
     this.syncOverlayToCanvas();
     this.setupResizeListener();
     this.startUpdateLoop();
@@ -103,6 +127,52 @@ export class GameUI {
     this.dangerLineEl.style.top = `${scaledTop}px`;
     this.dangerLineEl.style.width = `${scaledWidth}px`;
     this.dangerLineEl.style.left = '0px';
+  }
+
+  /**
+   * Create achievement button near score banner
+   */
+  private createAchievementButton(): void {
+    const button = document.createElement('button');
+    button.className = 'achievement-btn';
+    button.innerHTML = '🏆';
+    button.title = 'Achievements';
+    button.style.cssText = `
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      border: 3px solid white;
+      font-size: 20px;
+      cursor: pointer;
+      pointer-events: all;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(255, 165, 0, 0.4);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      padding: 0;
+    `;
+
+    button.addEventListener('mouseenter', () => {
+      button.style.transform = 'scale(1.1)';
+      button.style.boxShadow = '0 6px 16px rgba(255, 165, 0, 0.5)';
+    });
+
+    button.addEventListener('mouseleave', () => {
+      button.style.transform = 'scale(1)';
+      button.style.boxShadow = '0 4px 12px rgba(255, 165, 0, 0.4)';
+    });
+
+    button.addEventListener('click', () => {
+      this.achievementScreen.show();
+    });
+
+    this.container.appendChild(button);
   }
 
   /**
