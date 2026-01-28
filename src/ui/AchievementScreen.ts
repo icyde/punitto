@@ -169,9 +169,10 @@ export class AchievementScreen {
     listEl.innerHTML = achievements
       .map(({ achievement, completed }) => {
         const difficultyStars = '⭐'.repeat(achievement.difficulty);
+        const cardClass = completed ? 'completed' : 'locked';
 
         return `
-          <div class="achievement-card ${completed ? 'completed' : ''}">
+          <div class="achievement-card ${cardClass}">
             <div class="achievement-icon">${completed ? '🏆' : '🔒'}</div>
             <div class="achievement-info">
               <div class="achievement-name">${achievement.name}</div>

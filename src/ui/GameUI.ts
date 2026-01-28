@@ -214,10 +214,17 @@ export class GameUI {
         this.dangerLineEl.style.background = COLORS.DANGER_LINE_WARNING;
         this.dangerLineEl.style.opacity = `${0.5 + progress * 0.5}`;
         this.dangerLineEl.style.height = `${2 + progress * 4}px`;
+        this.dangerLineEl.classList.add('active');
+
+        // Spawn danger particles occasionally
+        if (Math.random() < 0.1 * progress) {
+          this.spawnDangerParticle();
+        }
       } else {
         this.dangerLineEl.style.background = COLORS.DANGER_LINE;
         this.dangerLineEl.style.opacity = '0.5';
         this.dangerLineEl.style.height = '2px';
+        this.dangerLineEl.classList.remove('active');
       }
     }
 
@@ -234,5 +241,30 @@ export class GameUI {
    */
   private updateDropGuide(): void {
     this.game.updateDropGuide();
+  }
+
+  /**
+   * Spawn a danger particle effect
+   */
+  private spawnDangerParticle(): void {
+    if (!this.dangerLineEl) return;
+
+    const particle = document.createElement('div');
+    particle.className = 'danger-particle';
+
+    const lineWidth = parseFloat(this.dangerLineEl.style.width) || GAME_CONFIG.CONTAINER_WIDTH * this.scaleX;
+    const randomX = Math.random() * lineWidth;
+
+    particle.style.left = `${randomX}px`;
+    particle.style.top = '0';
+
+    this.dangerLineEl.appendChild(particle);
+
+    // Remove particle after animation
+    setTimeout(() => {
+      if (particle.parentNode === this.dangerLineEl) {
+        particle.remove();
+      }
+    }, 1000);
   }
 }

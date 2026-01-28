@@ -168,6 +168,8 @@ This project uses **strict TypeScript** with additional checks:
 - `noUnusedLocals: true`
 - `noUnusedParameters: true` (prefix unused params with `_`)
 - `noUncheckedIndexedAccess: true` (array access returns `T | undefined`)
+- `noImplicitReturns: true` (all code paths must return)
+- `noFallthroughCasesInSwitch: true`
 
 When accessing arrays/objects, always check for undefined:
 ```typescript

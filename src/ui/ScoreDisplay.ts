@@ -5,6 +5,9 @@ export class ScoreDisplay {
   private element: HTMLDivElement;
   private currentScoreEl: HTMLSpanElement;
   private highScoreEl: HTMLSpanElement;
+  private lastScore: number = 0;
+  private lastHighScore: number = 0;
+  private bounceTimeout: number | null = null;
 
   constructor(parentElement: HTMLElement) {
     this.element = this.createScoreDisplay();
@@ -42,17 +45,57 @@ export class ScoreDisplay {
   }
 
   /**
-   * Update current score
+   * Update current score with bounce animation on increase
    */
   updateScore(score: number): void {
     this.currentScoreEl.textContent = score.toLocaleString();
+
+    // Trigger bounce animation if score increased
+    if (score > this.lastScore) {
+      this.triggerBounce();
+    }
+    this.lastScore = score;
   }
 
   /**
-   * Update high score
+   * Trigger bounce animation on score element
+   */
+  private triggerBounce(): void {
+    // Clear any existing timeout
+    if (this.bounceTimeout !== null) {
+      clearTimeout(this.bounceTimeout);
+      this.currentScoreEl.classList.remove('score-bounce');
+    }
+
+    // Force reflow to restart animation
+    void this.currentScoreEl.offsetWidth;
+
+    this.currentScoreEl.classList.add('score-bounce');
+
+    this.bounceTimeout = window.setTimeout(() => {
+      this.currentScoreEl.classList.remove('score-bounce');
+      this.bounceTimeout = null;
+    }, 400);
+  }
+
+  /**
+   * Update high score with celebration effect on new high
    */
   updateHighScore(highScore: number): void {
     this.highScoreEl.textContent = highScore.toLocaleString();
+
+    // Add celebration effect if high score increased
+    if (highScore > this.lastHighScore && this.lastHighScore > 0) {
+      this.highScoreEl.classList.add('new-high');
+    }
+    this.lastHighScore = highScore;
+  }
+
+  /**
+   * Reset high score celebration state
+   */
+  resetHighScoreCelebration(): void {
+    this.highScoreEl.classList.remove('new-high');
   }
 
   /**

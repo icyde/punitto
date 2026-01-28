@@ -91,6 +91,7 @@ export class ThemeSelector {
     listEl.innerHTML = ALL_THEMES.map(theme => {
       const unlocked = isThemeUnlocked(theme, totalStars);
       const isActive = theme.id === this.activeThemeId;
+      const progressPercent = Math.min(100, (totalStars / theme.unlockRequirement) * 100);
 
       return `
         <div class="theme-card ${unlocked ? 'unlocked' : 'locked'} ${isActive ? 'active' : ''}"
@@ -105,7 +106,12 @@ export class ThemeSelector {
             ${!unlocked ? `
               <div class="theme-locked">
                 <span class="lock-icon">🔒</span>
-                <span class="unlock-requirement">Unlock: ${theme.unlockRequirement} ⭐</span>
+                <span class="unlock-requirement">${totalStars} / ${theme.unlockRequirement} ⭐</span>
+              </div>
+              <div class="theme-unlock-progress">
+                <div class="unlock-progress-bar">
+                  <div class="unlock-progress-fill" style="width: ${progressPercent}%"></div>
+                </div>
               </div>
             ` : isActive ? `
               <div class="theme-active">✓ Currently Active</div>
@@ -140,13 +146,13 @@ export class ThemeSelector {
       return `<div class="preview-locked">🔒</div>`;
     }
 
-    // Show first 3 animals as preview
-    const previewAnimals = theme.animals.slice(0, 3);
+    // Show first 4 animals as preview with actual images
+    const previewAnimals = theme.animals.slice(0, 4);
     return `
       <div class="preview-animals">
         ${previewAnimals.map(animal => `
           <div class="preview-animal" title="${animal.name}">
-            ${animal.name.charAt(0)}
+            <img src="${animal.spritePath}" alt="${animal.name}" onerror="this.style.display='none';this.parentElement.textContent='${animal.name.charAt(0)}'"/>
           </div>
         `).join('')}
       </div>

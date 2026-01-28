@@ -42,10 +42,10 @@ export class QuestToast {
     this.container.appendChild(toast);
     this.activeToasts.push(toast);
 
-    // Animate in
+    // Animate in with spring effect
     requestAnimationFrame(() => {
       toast.style.opacity = '1';
-      toast.style.transform = 'translateY(0)';
+      toast.style.transform = 'translateY(0) scale(1)';
     });
 
     // Auto-dismiss after 3 seconds
@@ -77,15 +77,17 @@ export class QuestToast {
       display: flex;
       align-items: center;
       gap: 12px;
-      background: white;
-      border-radius: 15px;
-      padding: 12px 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 14px 18px;
       opacity: 0;
-      transform: translateY(-20px);
-      transition: all 0.3s ease-out;
+      transform: translateY(-30px) scale(0.9);
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       pointer-events: all;
       font-family: 'Fredoka', 'Quicksand', sans-serif;
+      border: 1px solid rgba(255, 255, 255, 0.5);
     `;
 
     return toast;
@@ -96,7 +98,7 @@ export class QuestToast {
    */
   private dismissToast(toast: HTMLDivElement): void {
     toast.style.opacity = '0';
-    toast.style.transform = 'translateY(-20px)';
+    toast.style.transform = 'translateY(-20px) scale(0.9)';
 
     setTimeout(() => {
       if (this.container.contains(toast)) {
@@ -106,7 +108,7 @@ export class QuestToast {
       if (index > -1) {
         this.activeToasts.splice(index, 1);
       }
-    }, 300);
+    }, 400);
   }
 
   /**

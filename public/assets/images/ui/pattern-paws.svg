@@ -2,7 +2,7 @@
   <!-- Paw print pattern - soft pink for kawaii aesthetic -->
   <defs>
     <style>
-      .paw { fill: #FFB6C1; opacity: 0.4; }
+      .paw { fill: #FFB6C1; opacity: 0.15; }
     </style>
   </defs>
 
