@@ -15,19 +15,26 @@ export class ScoreDisplay {
   }
 
   /**
-   * Create score display HTML
+   * Create score display HTML with decorative banner styling
    */
   private createScoreDisplay(): HTMLDivElement {
     const container = document.createElement('div');
     container.className = 'score-display';
     container.innerHTML = `
-      <div class="current-score">
-        <div class="score-label">Score</div>
-        <div class="current-score-value">0</div>
-      </div>
-      <div class="high-score">
-        <div class="score-label">Best</div>
-        <div class="high-score-value">0</div>
+      <div class="score-banner">
+        <div class="banner-decoration banner-left"></div>
+        <div class="banner-content">
+          <div class="current-score">
+            <div class="score-label">Score</div>
+            <div class="current-score-value">0</div>
+          </div>
+          <div class="score-divider"></div>
+          <div class="high-score">
+            <div class="score-label">Best</div>
+            <div class="high-score-value">0</div>
+          </div>
+        </div>
+        <div class="banner-decoration banner-right"></div>
       </div>
     `;
 

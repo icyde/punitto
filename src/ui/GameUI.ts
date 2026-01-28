@@ -1,8 +1,8 @@
 import { ScoreDisplay } from './ScoreDisplay';
+import { ProgressionWheel } from './ProgressionWheel';
 import { Modal } from './Modal';
 import { Game } from '../game/Game';
 import { GAME_CONFIG, COLORS } from '../utils/constants';
-import { spriteLoader } from '../game/SpriteLoader';
 
 /**
  * Main game UI overlay manager
@@ -15,26 +15,37 @@ export class GameUI {
   private scaleX: number = 1;
   private scaleY: number = 1;
   private scoreDisplay: ScoreDisplay;
+  private progressionWheel: ProgressionWheel;
   private modal: Modal;
   private dangerLineEl: HTMLDivElement | null = null;
-  private previewEl: HTMLDivElement | null = null;
-  private previewImgEl: HTMLImageElement | null = null;
-  private lastPreviewTier: number = -1;
+  private isLandscape: boolean = false;
+  private landscapeMediaQuery: MediaQueryList;
 
   constructor(game: Game, canvas: HTMLCanvasElement) {
     this.game = game;
     this.canvas = canvas;
     this.container = this.createContainer();
     this.scoreDisplay = new ScoreDisplay(this.container);
+    this.progressionWheel = new ProgressionWheel(
+      this.container,
+      this.game.getThemeManager()
+    );
     this.modal = new Modal();
+
+    // Set up orientation detection
+    this.landscapeMediaQuery = window.matchMedia(
+      '(orientation: landscape) and (min-width: 600px)'
+    );
+    this.isLandscape = this.landscapeMediaQuery.matches;
 
     this.setupGameOverCallback();
     this.setupMergeCallback();
     this.createDangerLine();
-    this.createPreview();
     this.syncOverlayToCanvas();
     this.setupResizeListener();
+    this.setupOrientationListener();
     this.startUpdateLoop();
+    this.updateLayout();
   }
 
   /**
@@ -128,49 +139,35 @@ export class GameUI {
   }
 
   /**
-   * Create next animal preview
+   * Set up orientation change listener
    */
-  private createPreview(): void {
-    this.previewEl = document.createElement('div');
-    this.previewEl.className = 'next-preview';
-    this.previewEl.style.cssText = `
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 70px;
-      height: 90px;
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 12px;
-      border: 2px solid #FFB6C1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      pointer-events: none;
-    `;
+  private setupOrientationListener(): void {
+    this.landscapeMediaQuery.addEventListener('change', (e) => {
+      this.isLandscape = e.matches;
+      this.updateLayout();
+    });
+  }
 
-    const label = document.createElement('div');
-    label.textContent = 'NEXT';
-    label.style.cssText = `
-      font-size: 10px;
-      font-weight: bold;
-      color: #5A4A42;
-      margin-bottom: 4px;
-      letter-spacing: 1px;
-    `;
+  /**
+   * Update layout based on orientation
+   */
+  private updateLayout(): void {
+    if (this.isLandscape) {
+      this.container.classList.add('game-layout');
+      // In landscape, resize canvas to be wider
+      this.canvas.style.width = 'auto';
+      this.canvas.style.height = '90vh';
+      this.canvas.style.maxHeight = '550px';
+    } else {
+      this.container.classList.remove('game-layout');
+      // Reset to portrait sizing
+      this.canvas.style.width = '';
+      this.canvas.style.height = '';
+      this.canvas.style.maxHeight = '';
+    }
 
-    this.previewImgEl = document.createElement('img');
-    this.previewImgEl.style.cssText = `
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      object-fit: cover;
-    `;
-
-    this.previewEl.appendChild(label);
-    this.previewEl.appendChild(this.previewImgEl);
-    this.container.appendChild(this.previewEl);
+    // Re-sync overlay after layout change
+    setTimeout(() => this.syncOverlayToCanvas(), 50);
   }
 
   /**
@@ -265,8 +262,9 @@ export class GameUI {
       }
     }
 
-    // Update next animal preview
-    this.updatePreview();
+    // Update progression wheel with next animal
+    const nextTier = this.game.getNextAnimalTier();
+    this.progressionWheel.updateNextAnimal(nextTier);
 
     // Update drop guide
     this.updateDropGuide();
@@ -277,30 +275,5 @@ export class GameUI {
    */
   private updateDropGuide(): void {
     this.game.updateDropGuide();
-  }
-
-  /**
-   * Update the next animal preview
-   */
-  private updatePreview(): void {
-    if (!this.previewImgEl) return;
-
-    const nextTier = this.game.getNextAnimalTier();
-
-    // Only update if tier changed
-    if (nextTier === this.lastPreviewTier) return;
-    this.lastPreviewTier = nextTier;
-
-    const theme = this.game.getThemeManager().getActiveTheme();
-    const themeAnimal = theme.animals[nextTier];
-    if (!themeAnimal) return;
-
-    const sprite = spriteLoader.getSprite(themeAnimal.spritePath);
-    if (sprite && sprite.complete) {
-      this.previewImgEl.src = sprite.src;
-    } else {
-      // Sprite not loaded yet, use path directly
-      this.previewImgEl.src = themeAnimal.spritePath;
-    }
   }
 }

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <!-- Subtle paw print pattern - soft pink, low opacity for kawaii aesthetic -->
+  <defs>
+    <style>
+      .paw { fill: #FFB6C1; opacity: 0.15; }
+    </style>
+  </defs>
+
+  <!-- Main pad -->
+  <ellipse class="paw" cx="20" cy="24" rx="6" ry="5"/>
+
+  <!-- Toe beans -->
+  <ellipse class="paw" cx="12" cy="15" rx="3" ry="3.5"/>
+  <ellipse class="paw" cx="20" cy="12" rx="3" ry="3.5"/>
+  <ellipse class="paw" cx="28" cy="15" rx="3" ry="3.5"/>
+</svg>
