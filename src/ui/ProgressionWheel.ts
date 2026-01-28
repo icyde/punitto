@@ -125,6 +125,13 @@ export class ProgressionWheel {
   }
 
   /**
+   * Reset the wheel state (call on game reset)
+   */
+  reset(): void {
+    this.lastNextTier = -1;
+  }
+
+  /**
    * Get the DOM element
    */
   getElement(): HTMLDivElement {

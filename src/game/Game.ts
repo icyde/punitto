@@ -353,7 +353,7 @@ export class Game {
    * Reset the game
    */
   reset(): void {
-    this.animalManager.clearAll();
+    this.animalManager.reset();
     this.mergePairs.clear();
     this.scoreManager.reset();
     this.isInDanger = false;

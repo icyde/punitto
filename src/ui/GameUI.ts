@@ -140,6 +140,7 @@ export class GameUI {
 
       this.modal.showGameOver(score, highScore, isNewHigh, () => {
         this.game.reset();
+        this.progressionWheel.reset();
       });
     });
   }

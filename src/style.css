@@ -622,7 +622,7 @@ button:active {
 /* Progression Wheel */
 .progression-wheel {
   position: absolute;
-  top: 10px;
+  top: 70px;
   left: 10px;
   width: 100px;
   height: 100px;

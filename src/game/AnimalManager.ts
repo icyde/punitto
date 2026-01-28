@@ -122,6 +122,15 @@ export class AnimalManager {
   }
 
   /**
+   * Reset manager (clear animals and reinitialize queue)
+   */
+  reset(): void {
+    this.clearAll();
+    this.queue = [];
+    this.initializeQueue();
+  }
+
+  /**
    * Get count of active animals
    */
   getCount(): number {
