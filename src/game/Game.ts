@@ -6,6 +6,7 @@ import { Animal } from '../entities/Animal';
 import { ScoreManager } from './ScoreManager';
 import { ThemeManager } from './ThemeManager';
 import { QuestManager } from './QuestManager';
+import { StatsTracker } from './StatsTracker';
 import { GAME_CONFIG } from '../utils/constants';
 
 /**
@@ -19,6 +20,7 @@ export class Game {
   private scoreManager: ScoreManager;
   private themeManager: ThemeManager;
   private questManager: QuestManager;
+  private statsTracker: StatsTracker;
   private canvas: HTMLCanvasElement;
   private isRunning: boolean = false;
   private mergePairs: Set<string> = new Set(); // Track merges in progress
@@ -32,6 +34,15 @@ export class Game {
   private cursorX: number | null = null;
   private onMergeCallback: ((x: number, y: number, score: number) => void) | null = null;
 
+  // Session tracking for quests
+  private sessionMerges: number = 0;
+  private sessionAnimalsCreated: Record<number, number> = {};
+  private sessionMaxChain: number = 0;
+  private currentChainCount: number = 0;
+
+  // Spawn cooldown tracking
+  private lastSpawnTime: number = 0;
+
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.physicsEngine = new PhysicsEngine(canvas);
@@ -40,6 +51,7 @@ export class Game {
     this.scoreManager = new ScoreManager();
     this.themeManager = new ThemeManager();
     this.questManager = new QuestManager();
+    this.statsTracker = new StatsTracker();
 
     this.initialize();
   }
@@ -218,6 +230,11 @@ export class Game {
     // Award score for merge
     const score = this.scoreManager.addMergeScore(tier);
 
+    // Track merge stats
+    this.sessionMerges++;
+    this.statsTracker.recordMerge(tier);
+    this.statsTracker.recordScore(score);
+
     // Trigger merge callback for score popup
     if (this.onMergeCallback) {
       this.onMergeCallback(mergeX, mergeY, score);
@@ -226,10 +243,13 @@ export class Game {
     // Special case: Big Floof (tier 6) merge - just disappear
     if (tier === 6) {
       console.log('💫 Two Big Floofs merged and disappeared!');
+      this.statsTracker.recordBigFloofMerge();
       const bonusScore = this.scoreManager.addBigFloofDisappear();
+      this.statsTracker.recordScore(bonusScore);
       if (this.onMergeCallback) {
         this.onMergeCallback(mergeX, mergeY, bonusScore);
       }
+      this.updateProgressTracking();
       return;
     }
 
@@ -238,7 +258,13 @@ export class Game {
     this.animalManager['animals'].set(newAnimal.getId(), newAnimal);
     this.physicsEngine.addBody(newAnimal.getBody());
 
+    // Track new animal created
+    this.trackAnimalCreated(tier + 1);
+
     console.log(`✨ Merged ${animalA.getTierData().name} + ${animalB.getTierData().name} → ${newAnimal.getTierData().name}`);
+
+    // Update progress tracking
+    this.updateProgressTracking();
 
     // Check for chain reactions (after a short delay)
     setTimeout(() => {
@@ -257,23 +283,73 @@ export class Game {
 
       if (newAnimal.canMergeWith(other) && newAnimal.isTouching(other)) {
         console.log('⚡ Chain reaction triggered!');
+        this.currentChainCount++;
+        this.statsTracker.recordChainReaction();
+        if (this.currentChainCount > this.sessionMaxChain) {
+          this.sessionMaxChain = this.currentChainCount;
+        }
         this.mergeAnimals(newAnimal, other);
         break; // Only one chain at a time
       }
     }
+
+    // Reset chain count after chain completes
+    setTimeout(() => {
+      this.currentChainCount = 0;
+    }, 500);
   }
 
   /**
    * Spawn an animal at the given X position
    */
   private spawnAnimal(x: number): void {
+    // Check spawn cooldown to prevent spam clicking
+    const now = Date.now();
+    if (now - this.lastSpawnTime < GAME_CONFIG.SPAWN_COOLDOWN) {
+      return; // Too soon, ignore this spawn attempt
+    }
+    this.lastSpawnTime = now;
+
     const bounds = this.container.getSpawnBounds();
 
     // Clamp X position within spawn bounds
     const clampedX = Math.max(bounds.minX, Math.min(bounds.maxX, x));
 
+    // Get the tier that will be spawned
+    const tier = this.animalManager.getNextTier();
+
     // Use AnimalManager to spawn
     this.animalManager.spawnAnimal(clampedX, bounds.spawnY);
+
+    // Track the spawned animal
+    this.trackAnimalCreated(tier);
+  }
+
+  /**
+   * Track an animal being created (spawned or merged)
+   */
+  private trackAnimalCreated(tier: number): void {
+    this.statsTracker.recordAnimalCreated(tier);
+    if (!this.sessionAnimalsCreated[tier]) {
+      this.sessionAnimalsCreated[tier] = 0;
+    }
+    this.sessionAnimalsCreated[tier]++;
+  }
+
+  /**
+   * Update quest and achievement progress
+   */
+  private updateProgressTracking(): void {
+    const stats = this.statsTracker.getStats();
+    const sessionData = {
+      mergesThisGame: this.sessionMerges,
+      scoreThisGame: this.scoreManager.getCurrentScore(),
+      animalsCreatedThisGame: this.sessionAnimalsCreated,
+      maxChainThisGame: this.sessionMaxChain
+    };
+
+    this.questManager.updateQuestProgress(stats, sessionData);
+    this.questManager.checkAchievements(stats);
   }
 
   /**
@@ -327,6 +403,10 @@ export class Game {
     this.isRunning = false;
     this.physicsEngine.stop();
 
+    // Record game played and final progress
+    this.statsTracker.recordGamePlayed();
+    this.updateProgressTracking();
+
     // Call game over callback if set
     if (this.gameOverCallback) {
       this.gameOverCallback();
@@ -366,6 +446,13 @@ export class Game {
     this.scoreManager.reset();
     this.isInDanger = false;
     this.dangerStartTime = null;
+
+    // Reset session tracking
+    this.sessionMerges = 0;
+    this.sessionAnimalsCreated = {};
+    this.sessionMaxChain = 0;
+    this.currentChainCount = 0;
+
     this.isRunning = true;
     this.physicsEngine.start();
   }

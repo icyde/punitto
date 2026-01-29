@@ -7,8 +7,11 @@ export const GAME_CONFIG = {
   WALL_THICKNESS: 10,
 
   // Physics
-  GRAVITY: 1.5,
+  GRAVITY: 2.2,
   FPS: 60,
+
+  // Spawn cooldown (prevent spam clicking)
+  SPAWN_COOLDOWN: 350, // milliseconds between spawns
 
   // Danger line
   DANGER_LINE_Y: 120, // Distance from top of container
@@ -65,7 +68,7 @@ export const ANIMAL_TIERS: AnimalTier[] = [
   {
     id: 3,
     name: 'Westie',
-    scale: 2.0,
+    scale: 2.3,
     baseRadius: 20,
     color: '#98FB98', // Pale green
     score: 100
@@ -73,7 +76,7 @@ export const ANIMAL_TIERS: AnimalTier[] = [
   {
     id: 4,
     name: 'Husky',
-    scale: 2.5,
+    scale: 2.7,
     baseRadius: 20,
     color: '#87CEEB', // Sky blue
     score: 200
@@ -81,7 +84,7 @@ export const ANIMAL_TIERS: AnimalTier[] = [
   {
     id: 5,
     name: 'Golden',
-    scale: 3.0,
+    scale: 3.4,
     baseRadius: 20,
     color: '#DAA520', // Golden rod
     score: 500
@@ -89,19 +92,19 @@ export const ANIMAL_TIERS: AnimalTier[] = [
   {
     id: 6,
     name: 'Big Floof',
-    scale: 3.5,
+    scale: 4.0,
     baseRadius: 20,
     color: '#F0E68C', // Khaki
     score: 1000
   }
 ];
 
-// Spawn probability weights (biased toward lower tiers)
+// Spawn probability weights (heavily biased toward lower tiers for difficulty)
 export const SPAWN_WEIGHTS = {
-  0: 40, // Hamster - 40%
+  0: 50, // Hamster - 50%
   1: 30, // Cat - 30%
-  2: 20, // Shiba - 20%
-  3: 10, // Westie - 10%
+  2: 15, // Shiba - 15%
+  3: 5,  // Westie - 5%
   4: 0,  // Husky - not spawnable
   5: 0,  // Golden - not spawnable
   6: 0   // Big Floof - not spawnable

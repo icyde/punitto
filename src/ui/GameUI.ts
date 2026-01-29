@@ -135,38 +135,11 @@ export class GameUI {
   private createAchievementButton(): void {
     const button = document.createElement('button');
     button.className = 'achievement-btn';
-    button.innerHTML = '🏆';
-    button.title = 'Achievements';
-    button.style.cssText = `
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-      border: 3px solid white;
-      font-size: 20px;
-      cursor: pointer;
-      pointer-events: all;
-      z-index: 15;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(255, 165, 0, 0.4);
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      padding: 0;
+    button.innerHTML = `
+      <span class="achievement-btn-icon">⭐</span>
+      <span class="achievement-btn-shine"></span>
     `;
-
-    button.addEventListener('mouseenter', () => {
-      button.style.transform = 'scale(1.1)';
-      button.style.boxShadow = '0 6px 16px rgba(255, 165, 0, 0.5)';
-    });
-
-    button.addEventListener('mouseleave', () => {
-      button.style.transform = 'scale(1)';
-      button.style.boxShadow = '0 4px 12px rgba(255, 165, 0, 0.4)';
-    });
+    button.title = 'Achievements & Quests';
 
     button.addEventListener('click', () => {
       this.achievementScreen.show();

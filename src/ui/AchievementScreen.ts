@@ -28,11 +28,13 @@ export class AchievementScreen {
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.8);
+      background: linear-gradient(135deg, rgba(255, 158, 170, 0.15) 0%, rgba(0, 0, 0, 0.75) 50%, rgba(180, 231, 255, 0.1) 100%);
       z-index: 1500;
       display: none;
       overflow-y: auto;
       padding: 20px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     `;
 
     screen.innerHTML = `
