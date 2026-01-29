@@ -378,11 +378,11 @@ export class Game {
       this.onMergeCallback(mergeX, mergeY, scoreInfo);
     }
 
-    // Special case: Big Floof (tier 6) merge - just disappear
-    if (tier === 6) {
-      console.log('💫 Two Big Floofs merged and disappeared!');
-      this.statsTracker.recordBigFloofMerge();
-      const bonusScore = this.scoreManager.addBigFloofDisappear();
+    // Special case: Angel (tier 7) merge - max tier, just disappear
+    if (tier === 7) {
+      console.log('👼 Two Angels merged and ascended!');
+      this.statsTracker.recordAngelMerge();
+      const bonusScore = this.scoreManager.addMaxTierDisappear();
       this.statsTracker.recordScore(bonusScore);
       if (this.onMergeCallback) {
         const bonusInfo: MergeScoreInfo = {

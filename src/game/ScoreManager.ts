@@ -1,4 +1,4 @@
-import { ANIMAL_TIERS, BIG_FLOOF_DISAPPEAR_SCORE } from '../utils/constants';
+import { ANIMAL_TIERS, MAX_TIER_DISAPPEAR_SCORE } from '../utils/constants';
 import { getHighScore, setHighScore } from '../utils/storage';
 
 /**
@@ -103,11 +103,11 @@ export class ScoreManager {
   }
 
   /**
-   * Add points for Big Floof disappear
+   * Add points for max tier (Angel) disappear
    * @returns The bonus points awarded
    */
-  addBigFloofDisappear(): number {
-    this.currentScore += BIG_FLOOF_DISAPPEAR_SCORE;
+  addMaxTierDisappear(): number {
+    this.currentScore += MAX_TIER_DISAPPEAR_SCORE;
 
     // Check for new high score
     if (this.currentScore > this.highScore) {
@@ -116,8 +116,8 @@ export class ScoreManager {
       setHighScore(this.highScore);
     }
 
-    console.log(`+${BIG_FLOOF_DISAPPEAR_SCORE} points (Big Floof!)! Total: ${this.currentScore}`);
-    return BIG_FLOOF_DISAPPEAR_SCORE;
+    console.log(`+${MAX_TIER_DISAPPEAR_SCORE} points (Angel Ascension!)! Total: ${this.currentScore}`);
+    return MAX_TIER_DISAPPEAR_SCORE;
   }
 
   /**

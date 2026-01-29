@@ -39,7 +39,8 @@ export const PASTEL_PAWS_THEME: Theme = {
     { tier: 3, name: 'Westie', spritePath: '/assets/images/pastelPaws/westie.png' },
     { tier: 4, name: 'Husky', spritePath: '/assets/images/pastelPaws/husky.png' },
     { tier: 5, name: 'Golden', spritePath: '/assets/images/pastelPaws/golden.png' },
-    { tier: 6, name: 'Big Floof', spritePath: '/assets/images/pastelPaws/bigFloof.png' }
+    { tier: 6, name: 'Big Floof', spritePath: '/assets/images/pastelPaws/bigFloof.png' },
+    { tier: 7, name: 'Angel', spritePath: '/assets/images/pastelPaws/angel.png' }
   ],
   colors: {
     containerBg: 'linear-gradient(180deg, #FFF8F0 0%, #FFE4E1 100%)',
@@ -63,7 +64,8 @@ export const OCEAN_DREAMS_THEME: Theme = {
     { tier: 3, name: 'Pufferfish', spritePath: '/assets/images/oceanDreams/pufferfish.png' },
     { tier: 4, name: 'Dolphin', spritePath: '/assets/images/oceanDreams/dolphin.png' },
     { tier: 5, name: 'Orca', spritePath: '/assets/images/oceanDreams/orca.png' },
-    { tier: 6, name: 'Ocean Spirit', spritePath: '/assets/images/oceanDreams/oceanSpirit.png' }
+    { tier: 6, name: 'Ocean Spirit', spritePath: '/assets/images/oceanDreams/oceanSpirit.png' },
+    { tier: 7, name: 'Sea Deity', spritePath: '/assets/images/oceanDreams/seaDeity.png' }
   ],
   colors: {
     containerBg: 'linear-gradient(180deg, #B4E7FF 0%, #6BB6D6 100%)',

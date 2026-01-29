@@ -166,9 +166,9 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: 'ach_completionist',
     name: 'Completionist',
-    description: 'Reach the highest tier (Big Floof)',
+    description: 'Reach the highest tier (Angel)',
     type: 'highest_tier',
-    target: 6,
+    target: 7,
     stars: 5,
     difficulty: 3
   }

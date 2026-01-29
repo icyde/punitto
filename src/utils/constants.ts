@@ -96,6 +96,14 @@ export const ANIMAL_TIERS: AnimalTier[] = [
     baseRadius: 20,
     color: '#F0E68C', // Khaki
     score: 1000
+  },
+  {
+    id: 7,
+    name: 'Angel',
+    scale: 4.6,
+    baseRadius: 20,
+    color: '#FFFACD', // Lemon chiffon / heavenly gold
+    score: 2500
   }
 ];
 
@@ -107,11 +115,12 @@ export const SPAWN_WEIGHTS = {
   3: 5,  // Westie - 5%
   4: 0,  // Husky - not spawnable
   5: 0,  // Golden - not spawnable
-  6: 0   // Big Floof - not spawnable
+  6: 0,  // Big Floof - not spawnable
+  7: 0   // Angel - not spawnable (max tier)
 };
 
-// Score thresholds for Big Floof special case
-export const BIG_FLOOF_DISAPPEAR_SCORE = 2500;
+// Score bonus for max tier (Angel) disappearing
+export const MAX_TIER_DISAPPEAR_SCORE = 5000;
 
 // Colors
 export const COLORS = {

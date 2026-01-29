@@ -9,7 +9,8 @@ export interface GameStats {
   animalsCreated: Record<number, number>; // Tier -> count
   highestTierReached: number;
   chainReactions: number;
-  bigFloofsMerged: number;
+  bigFloofsCreated: number;
+  angelsMerged: number;
   totalScore: number;
   lastPlayedDate: string;
   // Difficulty stats
@@ -39,7 +40,8 @@ export class StatsTracker {
       animalsCreated: {},
       highestTierReached: 0,
       chainReactions: 0,
-      bigFloofsMerged: 0,
+      bigFloofsCreated: 0,
+      angelsMerged: 0,
       totalScore: 0,
       lastPlayedDate: new Date().toISOString(),
       maxCombo: 0,
@@ -100,10 +102,10 @@ export class StatsTracker {
   }
 
   /**
-   * Record Big Floof merge
+   * Record Angel merge (max tier ascension)
    */
-  recordBigFloofMerge(): void {
-    this.stats.bigFloofsMerged++;
+  recordAngelMerge(): void {
+    this.stats.angelsMerged++;
     this.saveStats();
   }
 
@@ -182,7 +184,8 @@ export class StatsTracker {
       animalsCreated: {},
       highestTierReached: 0,
       chainReactions: 0,
-      bigFloofsMerged: 0,
+      bigFloofsCreated: 0,
+      angelsMerged: 0,
       totalScore: 0,
       lastPlayedDate: new Date().toISOString(),
       maxCombo: 0,
