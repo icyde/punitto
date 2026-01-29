@@ -120,3 +120,39 @@ export const COLORS = {
   CONTAINER_BG: '#FFFFFF',
   WALL: '#E8D4C4' // Soft cream/beige - aligned with pastel theme
 };
+
+// Combo System Configuration
+export const COMBO_CONFIG = {
+  WINDOW_MS: 3000, // Time between merges to maintain combo
+  CHAIN_EXTENSION_MS: 1000, // Extra time added per chain reaction
+  MULTIPLIERS: [1.0, 1.5, 2.0, 2.5, 3.0], // Index = combo count (0, 1, 2, 3, 4+)
+  MAX_COMBO: 4 // Cap at index 4 (3.0x)
+};
+
+// Difficulty Escalation Configuration
+export interface DifficultyTier {
+  minScore: number;
+  weights: { 0: number; 1: number; 2: number; 3: number };
+}
+
+export const DIFFICULTY_CONFIG: DifficultyTier[] = [
+  { minScore: 0, weights: { 0: 50, 1: 30, 2: 15, 3: 5 } },
+  { minScore: 1000, weights: { 0: 40, 1: 35, 2: 18, 3: 7 } },
+  { minScore: 2500, weights: { 0: 30, 1: 35, 2: 23, 3: 12 } },
+  { minScore: 5000, weights: { 0: 20, 1: 35, 2: 28, 3: 17 } },
+  { minScore: 10000, weights: { 0: 15, 1: 30, 2: 30, 3: 25 } }
+];
+
+// Risk Zone Configuration
+export const RISK_ZONE_CONFIG = {
+  DEPTH: 40, // Pixels below danger line that count as risk zone
+  BONUS_MULTIPLIER: 1.25 // Score multiplier for merges in risk zone
+};
+
+// Quick Merge Configuration
+export const QUICK_MERGE_CONFIG = {
+  WINDOW_MS: 800, // Time after settle to qualify for quick merge
+  BONUS_MULTIPLIER: 1.25, // Score multiplier for quick merges
+  SETTLE_VELOCITY_THRESHOLD: 0.5, // Max velocity to be considered settled
+  SETTLE_DURATION_MS: 200 // How long animal must be below velocity threshold
+};

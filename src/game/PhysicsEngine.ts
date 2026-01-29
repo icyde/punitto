@@ -17,13 +17,17 @@ export class PhysicsEngine {
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
 
-    // Create Matter.js engine
+    // Create Matter.js engine with improved solver settings
     this.engine = Matter.Engine.create({
       gravity: {
         x: 0,
         y: GAME_CONFIG.GRAVITY,
         scale: 0.001
-      }
+      },
+      // Increase constraint iterations for better collision resolution in tight spaces
+      constraintIterations: 4,
+      positionIterations: 10,
+      velocityIterations: 8
     });
 
     this.world = this.engine.world;
@@ -54,6 +58,45 @@ export class PhysicsEngine {
     Matter.Events.on(this.render, 'afterRender', () => {
       this.customRenderer.render();
     });
+
+    // Clamp velocities after each update to prevent floating/explosion issues
+    Matter.Events.on(this.engine, 'afterUpdate', () => {
+      this.clampVelocities();
+    });
+  }
+
+  /**
+   * Clamp body velocities to prevent physics glitches
+   * Particularly important when bodies are squeezed together
+   */
+  private clampVelocities(): void {
+    const maxUpwardVelocity = -8; // Max upward velocity (negative Y is up)
+    const maxHorizontalVelocity = 15;
+
+    const bodies = Matter.Composite.allBodies(this.world);
+    for (const body of bodies) {
+      if (body.isStatic) continue;
+
+      let vx = body.velocity.x;
+      let vy = body.velocity.y;
+      let clamped = false;
+
+      // Clamp extreme upward velocity (the main issue)
+      if (vy < maxUpwardVelocity) {
+        vy = maxUpwardVelocity;
+        clamped = true;
+      }
+
+      // Clamp horizontal velocity too
+      if (Math.abs(vx) > maxHorizontalVelocity) {
+        vx = Math.sign(vx) * maxHorizontalVelocity;
+        clamped = true;
+      }
+
+      if (clamped) {
+        Matter.Body.setVelocity(body, { x: vx, y: vy });
+      }
+    }
   }
 
   /**

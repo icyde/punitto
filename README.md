@@ -6,6 +6,11 @@ A mobile-first physics-based merge puzzle game with cute animals, quest system, 
 
 - **7-Tier Animal System**: Merge identical animals to create bigger ones (Hamster → Cat → Shiba → Westie → Husky → Golden → Big Floof)
 - **Physics-Based Gameplay**: Realistic physics powered by Matter.js
+- **Difficulty System**: Four synergistic mechanics reward skill:
+  - **Combo System**: Consecutive merges within 3s build multipliers (up to 3x)
+  - **Escalating Difficulty**: Larger animals spawn more often as score increases
+  - **Risk Zone Bonus**: 1.25x for merges near the danger line
+  - **Quick Merge Bonus**: 1.25x for merging recently settled animals
 - **Quest System**: Daily quests and lifetime achievements
 - **Theme System**: Unlock new themes (Pastel Paws, Ocean Dreams) by earning stars
 - **Scoring & High Scores**: Track your best scores with LocalStorage persistence
@@ -69,6 +74,7 @@ src/
 ├── ui/                  # UI components
 │   ├── GameUI.ts        # Main UI overlay
 │   ├── ScoreDisplay.ts  # Score display
+│   ├── ComboDisplay.ts  # Combo counter UI
 │   ├── Modal.ts         # Modal system
 │   ├── QuestToast.ts    # Quest notifications
 │   ├── AchievementScreen.ts # Achievements UI
@@ -118,6 +124,24 @@ Until assets are created, the game uses colored circles as placeholders.
 3. **Chain Reactions**: Merges can trigger more merges automatically
 4. **Danger Line**: Don't let animals stay above the red line for 3+ seconds
 5. **Big Floof**: Two Big Floofs merge and disappear (2500 points!)
+
+### Scoring Multipliers
+
+Score = Base Points × Combo × Risk × Quick
+
+- **Combo**: Merge within 3s of previous merge to build combo (1.5x → 2x → 2.5x → 3x max)
+- **Risk Zone**: Merge within 40px of danger line for 1.25x bonus
+- **Quick Merge**: Merge animal within 0.8s of settling for 1.25x bonus
+- **Chain Bonus**: Chain reactions extend combo window by 1s each
+
+### Difficulty Scaling
+
+As your score increases, larger animals spawn more frequently:
+- 0-999: Mostly hamsters (50%)
+- 1000-2499: More cats and shibas
+- 2500-4999: Balanced distribution
+- 5000-9999: Westies become common (17%)
+- 10000+: Maximum difficulty (25% westies)
 
 ### Progression System
 
@@ -173,6 +197,16 @@ Tested and compatible with:
 - [ ] Game over triggers after 3s above danger line
 - [ ] High score persists
 
+### Difficulty System
+- [ ] Combo counter appears after first merge
+- [ ] Combo multiplier increases with consecutive merges
+- [ ] Combo decays after 3 seconds
+- [ ] Chain reactions extend combo window
+- [ ] Larger animals spawn more at higher scores
+- [ ] Risk zone bonus applies near danger line
+- [ ] Quick merge bonus applies for recently settled animals
+- [ ] Score popups show bonus tags (COMBO, RISK, QUICK)
+
 ### Progression
 - [ ] Daily quest appears and tracks progress
 - [ ] Daily quest resets at midnight
@@ -205,13 +239,35 @@ Game parameters can be adjusted in `src/utils/constants.ts`:
 
 ```typescript
 export const GAME_CONFIG = {
-  CONTAINER_WIDTH: 375,        // Container width
-  CONTAINER_HEIGHT: 600,       // Container height
-  GRAVITY: 1.0,                // Physics gravity
+  CONTAINER_WIDTH: 300,        // Container width
+  CONTAINER_HEIGHT: 550,       // Container height
+  GRAVITY: 2.2,                // Physics gravity
   FPS: 60,                     // Target framerate
   DANGER_LINE_Y: 120,          // Danger line position
   DANGER_TIME_THRESHOLD: 3000, // Time above line before game over
   QUEUE_SIZE: 2,               // Number of animals in queue
+};
+
+export const COMBO_CONFIG = {
+  WINDOW_MS: 3000,             // Time between merges to maintain combo
+  CHAIN_EXTENSION_MS: 1000,    // Extra time per chain reaction
+  MULTIPLIERS: [1.0, 1.5, 2.0, 2.5, 3.0], // Multipliers by combo count
+};
+
+export const DIFFICULTY_CONFIG = [
+  { minScore: 0, weights: { 0: 50, 1: 30, 2: 15, 3: 5 } },
+  { minScore: 1000, weights: { 0: 40, 1: 35, 2: 18, 3: 7 } },
+  // ... more tiers at 2500, 5000, 10000
+];
+
+export const RISK_ZONE_CONFIG = {
+  DEPTH: 40,                   // Pixels below danger line
+  BONUS_MULTIPLIER: 1.25,      // Score multiplier
+};
+
+export const QUICK_MERGE_CONFIG = {
+  WINDOW_MS: 800,              // Time after settle to qualify
+  BONUS_MULTIPLIER: 1.25,      // Score multiplier
 };
 ```
 
@@ -225,6 +281,7 @@ Potential features for future versions:
 - **Events**: Seasonal events with special themes
 - **Customization**: Custom color schemes, backgrounds
 - **Social Features**: Share scores, gift stars to friends
+- **Sound Effects**: Audio feedback for combo, risk zone, quick merge
 
 ## License
 

@@ -2,7 +2,7 @@ import Matter from 'matter-js';
 import { Animal } from '../entities/Animal';
 import { spriteLoader } from './SpriteLoader';
 import { Theme } from '../progression/themes';
-import { ANIMAL_TIERS } from '../utils/constants';
+import { ANIMAL_TIERS, GAME_CONFIG, RISK_ZONE_CONFIG, QUICK_MERGE_CONFIG } from '../utils/constants';
 
 /**
  * Custom renderer for drawing sprites on animals
@@ -19,6 +19,10 @@ export class CustomRenderer {
   private dropGuideX: number | null = null;
   private dropGuideY: number = 0;
   private nextTier: number = 0;
+
+  // Risk zone rendering
+  private showRiskZone: boolean = true;
+  private dangerLineY: number = GAME_CONFIG.DANGER_LINE_Y;
 
   constructor(canvas: HTMLCanvasElement, engine: Matter.Engine) {
     this.canvas = canvas;
@@ -44,6 +48,11 @@ export class CustomRenderer {
   render(): void {
     if (!this.useSprites || !this.currentTheme) return;
 
+    // Draw risk zone first (behind animals)
+    if (this.showRiskZone) {
+      this.renderRiskZone();
+    }
+
     const bodies = Matter.Composite.allBodies(this.engine.world);
 
     bodies.forEach(body => {
@@ -54,6 +63,47 @@ export class CustomRenderer {
 
     // Draw drop guide on top
     this.renderDropGuide();
+  }
+
+  /**
+   * Render the risk zone overlay
+   */
+  private renderRiskZone(): void {
+    const riskZoneTop = this.dangerLineY;
+    const riskZoneBottom = this.dangerLineY + RISK_ZONE_CONFIG.DEPTH;
+
+    // Create gradient for risk zone
+    const gradient = this.ctx.createLinearGradient(0, riskZoneTop, 0, riskZoneBottom);
+    gradient.addColorStop(0, 'rgba(255, 107, 107, 0.15)');
+    gradient.addColorStop(1, 'rgba(255, 107, 107, 0.02)');
+
+    this.ctx.save();
+    this.ctx.fillStyle = gradient;
+    this.ctx.fillRect(0, riskZoneTop, this.canvas.width, RISK_ZONE_CONFIG.DEPTH);
+
+    // Draw subtle border at bottom of risk zone
+    this.ctx.strokeStyle = 'rgba(255, 107, 107, 0.2)';
+    this.ctx.lineWidth = 1;
+    this.ctx.setLineDash([4, 4]);
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, riskZoneBottom);
+    this.ctx.lineTo(this.canvas.width, riskZoneBottom);
+    this.ctx.stroke();
+    this.ctx.restore();
+  }
+
+  /**
+   * Set danger line Y position for risk zone rendering
+   */
+  setDangerLineY(y: number): void {
+    this.dangerLineY = y;
+  }
+
+  /**
+   * Enable/disable risk zone rendering
+   */
+  setShowRiskZone(show: boolean): void {
+    this.showRiskZone = show;
   }
 
   /**
@@ -152,6 +202,11 @@ export class CustomRenderer {
     this.ctx.translate(pos.x, pos.y);
     this.ctx.rotate(body.angle);
 
+    // Draw settled glow effect if animal qualifies for quick merge
+    if (animal.isQuickMergeEligible()) {
+      this.renderSettledGlow(radius, animal.getTimeSinceSettled());
+    }
+
     // Draw sprite centered (no clipping - show full sprite)
     this.ctx.drawImage(
       sprite,
@@ -163,6 +218,30 @@ export class CustomRenderer {
 
     // Restore context
     this.ctx.restore();
+  }
+
+  /**
+   * Render a glow effect for settled animals eligible for quick merge
+   */
+  private renderSettledGlow(radius: number, timeSinceSettled: number | null): void {
+    if (timeSinceSettled === null) return;
+
+    // Fade out the glow as the quick merge window closes
+    const progress = Math.max(0, 1 - (timeSinceSettled / QUICK_MERGE_CONFIG.WINDOW_MS));
+    const alpha = progress * 0.4;
+
+    if (alpha <= 0) return;
+
+    // Create radial gradient for glow
+    const gradient = this.ctx.createRadialGradient(0, 0, radius * 0.8, 0, 0, radius * 1.3);
+    gradient.addColorStop(0, `rgba(255, 215, 0, ${alpha})`);
+    gradient.addColorStop(0.5, `rgba(255, 180, 100, ${alpha * 0.5})`);
+    gradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
+
+    this.ctx.fillStyle = gradient;
+    this.ctx.beginPath();
+    this.ctx.arc(0, 0, radius * 1.3, 0, Math.PI * 2);
+    this.ctx.fill();
   }
 
   /**

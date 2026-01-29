@@ -1,5 +1,5 @@
 import Matter from 'matter-js';
-import { ANIMAL_TIERS, AnimalTier, GAME_CONFIG } from '../utils/constants';
+import { ANIMAL_TIERS, AnimalTier, GAME_CONFIG, QUICK_MERGE_CONFIG } from '../utils/constants';
 
 /**
  * Animal entity representing a droppable/mergeable circle
@@ -10,6 +10,10 @@ export class Animal {
   private tierData: AnimalTier;
   private id: string;
   private createdAt: number;
+
+  // Settle tracking for quick merge bonus
+  private settledTime: number | null = null;
+  private settleCheckStart: number | null = null;
 
   constructor(x: number, y: number, tier: number) {
     this.tier = tier;
@@ -22,9 +26,12 @@ export class Animal {
 
     // Create physics body
     this.body = Matter.Bodies.circle(x, y, radius, {
-      restitution: 0.3, // Bounciness
-      friction: 0.5,
+      restitution: 0.2, // Reduced bounciness to prevent energy gain
+      friction: 0.8, // Higher friction prevents slipping between bodies
+      frictionAir: 0.02, // Air resistance dampens floating/unexpected movement
+      frictionStatic: 0.8, // Higher static friction for stability
       density: 0.001,
+      slop: 0.01, // Small positional tolerance reduces jitter
       label: `animal-tier${tier}`,
       render: {
         fillStyle: 'transparent' // Hidden - CustomRenderer draws sprites on top
@@ -107,6 +114,55 @@ export class Animal {
    */
   canMergeWith(other: Animal): boolean {
     return this.tier === other.getTier() && this.tier < 6; // Same tier and not max tier
+  }
+
+  /**
+   * Update settle status based on current velocity
+   * Should be called each physics tick
+   */
+  updateSettleStatus(): void {
+    const velocity = this.body.velocity;
+    const speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+
+    if (speed < QUICK_MERGE_CONFIG.SETTLE_VELOCITY_THRESHOLD) {
+      // Animal is moving slowly
+      if (this.settleCheckStart === null) {
+        this.settleCheckStart = Date.now();
+      } else if (this.settledTime === null) {
+        const elapsed = Date.now() - this.settleCheckStart;
+        if (elapsed >= QUICK_MERGE_CONFIG.SETTLE_DURATION_MS) {
+          this.settledTime = Date.now();
+        }
+      }
+    } else {
+      // Animal is moving, reset settle tracking
+      this.settleCheckStart = null;
+      this.settledTime = null;
+    }
+  }
+
+  /**
+   * Check if the animal has settled
+   */
+  isSettled(): boolean {
+    return this.settledTime !== null;
+  }
+
+  /**
+   * Get time since animal settled (ms), or null if not settled
+   */
+  getTimeSinceSettled(): number | null {
+    if (this.settledTime === null) return null;
+    return Date.now() - this.settledTime;
+  }
+
+  /**
+   * Check if this animal qualifies for quick merge bonus
+   */
+  isQuickMergeEligible(): boolean {
+    const timeSinceSettled = this.getTimeSinceSettled();
+    if (timeSinceSettled === null) return false;
+    return timeSinceSettled <= QUICK_MERGE_CONFIG.WINDOW_MS;
   }
 
   /**

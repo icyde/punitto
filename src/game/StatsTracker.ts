@@ -12,6 +12,11 @@ export interface GameStats {
   bigFloofsMerged: number;
   totalScore: number;
   lastPlayedDate: string;
+  // Difficulty stats
+  maxCombo: number;
+  riskZoneMerges: number;
+  quickMerges: number;
+  highestDifficultyReached: number;
 }
 
 /**
@@ -36,7 +41,11 @@ export class StatsTracker {
       chainReactions: 0,
       bigFloofsMerged: 0,
       totalScore: 0,
-      lastPlayedDate: new Date().toISOString()
+      lastPlayedDate: new Date().toISOString(),
+      maxCombo: 0,
+      riskZoneMerges: 0,
+      quickMerges: 0,
+      highestDifficultyReached: 0
     });
   }
 
@@ -107,6 +116,42 @@ export class StatsTracker {
   }
 
   /**
+   * Update max combo if current is higher
+   */
+  updateMaxCombo(combo: number): void {
+    if (combo > this.stats.maxCombo) {
+      this.stats.maxCombo = combo;
+      this.saveStats();
+    }
+  }
+
+  /**
+   * Record a risk zone merge
+   */
+  recordRiskZoneMerge(): void {
+    this.stats.riskZoneMerges++;
+    this.saveStats();
+  }
+
+  /**
+   * Record a quick merge
+   */
+  recordQuickMerge(): void {
+    this.stats.quickMerges++;
+    this.saveStats();
+  }
+
+  /**
+   * Update highest difficulty reached
+   */
+  updateHighestDifficulty(difficulty: number): void {
+    if (difficulty > this.stats.highestDifficultyReached) {
+      this.stats.highestDifficultyReached = difficulty;
+      this.saveStats();
+    }
+  }
+
+  /**
    * Get current stats
    */
   getStats(): Readonly<GameStats> {
@@ -139,7 +184,11 @@ export class StatsTracker {
       chainReactions: 0,
       bigFloofsMerged: 0,
       totalScore: 0,
-      lastPlayedDate: new Date().toISOString()
+      lastPlayedDate: new Date().toISOString(),
+      maxCombo: 0,
+      riskZoneMerges: 0,
+      quickMerges: 0,
+      highestDifficultyReached: 0
     };
     this.saveStats();
   }

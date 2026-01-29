@@ -134,11 +134,22 @@ Implemented in `Game.ts`:
 
 ### Physics Configuration
 Matter.js settings in `PhysicsEngine.ts`:
-- Gravity: `{x: 0, y: 1.0, scale: 0.001}`
-- Fixed timestep: `1000 / 60` (60fps)
-- Restitution (bounce): 0.3
-- Friction: 0.5
-- Density: 0.001 (prevents animals from being too heavy)
+- Gravity: `{x: 0, y: 2.2, scale: 0.001}`
+- Solver: position=10, velocity=8, constraint=4 iterations
+- Velocity clamping: max upward=-8, max horizontal=15
+
+Animal body (`Animal.ts`):
+- Restitution: 0.2, Friction: 0.8, FrictionAir: 0.02, Slop: 0.01
+
+### Difficulty System
+Four synergistic mechanics (`constants.ts` configs, `Game.ts` logic):
+
+1. **Combo** (`COMBO_CONFIG`): 3s window, 1.5x→3.0x multipliers, chains +1s
+2. **Escalating Difficulty** (`DIFFICULTY_CONFIG`): Spawn weights shift at 0/1k/2.5k/5k/10k
+3. **Risk Zone** (`RISK_ZONE_CONFIG`): 1.25x for merges within 40px of danger line
+4. **Quick Merge** (`QUICK_MERGE_CONFIG`): 1.25x if merged within 0.8s of settling
+
+Score: `Base × Combo × Risk × Quick`. UI: `ComboDisplay.ts`, visual effects in `CustomRenderer.ts`.
 
 ### Critical File Dependencies
 
@@ -215,8 +226,12 @@ Edit `src/utils/constants.ts`:
 - `GRAVITY`: Lower = slower fall (easier), higher = faster (harder)
 - `DANGER_LINE_Y`: Higher = more space (easier)
 - `DANGER_TIME_THRESHOLD`: Longer = easier
-- `SPAWN_WEIGHTS`: Adjust tier 0-3 probabilities
-- `ANIMAL_TIERS[n].score`: Adjust points for each merge
+- `SPAWN_WEIGHTS`: Base tier 0-3 probabilities (used at score 0)
+- `DIFFICULTY_CONFIG`: Score thresholds and spawn weights per difficulty tier
+- `COMBO_CONFIG`: Combo window, multipliers, chain extension time
+- `RISK_ZONE_CONFIG`: Risk zone depth and bonus multiplier
+- `QUICK_MERGE_CONFIG`: Settle detection and bonus multiplier
+- `ANIMAL_TIERS[n].score`: Base points for each merge (before multipliers)
 
 ## Common Patterns
 

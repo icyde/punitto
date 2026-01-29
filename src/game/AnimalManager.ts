@@ -1,5 +1,5 @@
 import { Animal } from '../entities/Animal';
-import { GAME_CONFIG, SPAWN_WEIGHTS } from '../utils/constants';
+import { GAME_CONFIG, SPAWN_WEIGHTS, DIFFICULTY_CONFIG } from '../utils/constants';
 import { PhysicsEngine } from './PhysicsEngine';
 
 /**
@@ -9,10 +9,51 @@ export class AnimalManager {
   private animals: Map<string, Animal> = new Map();
   private queue: number[] = [];
   private physicsEngine: PhysicsEngine;
+  private currentScore: number = 0;
+  private currentDifficultyIndex: number = 0;
 
   constructor(physicsEngine: PhysicsEngine) {
     this.physicsEngine = physicsEngine;
     this.initializeQueue();
+  }
+
+  /**
+   * Set current score for difficulty scaling
+   */
+  setCurrentScore(score: number): void {
+    this.currentScore = score;
+    this.updateDifficultyTier();
+  }
+
+  /**
+   * Update difficulty tier based on current score
+   */
+  private updateDifficultyTier(): void {
+    for (let i = DIFFICULTY_CONFIG.length - 1; i >= 0; i--) {
+      const tier = DIFFICULTY_CONFIG[i];
+      if (tier && this.currentScore >= tier.minScore) {
+        if (this.currentDifficultyIndex !== i) {
+          this.currentDifficultyIndex = i;
+          console.log(`📈 Difficulty increased to tier ${i + 1} (score: ${this.currentScore})`);
+        }
+        return;
+      }
+    }
+  }
+
+  /**
+   * Get current difficulty tier index (0-4)
+   */
+  getDifficultyTier(): number {
+    return this.currentDifficultyIndex;
+  }
+
+  /**
+   * Get spawn weights for current difficulty
+   */
+  private getCurrentWeights(): { 0: number; 1: number; 2: number; 3: number } {
+    const difficultyTier = DIFFICULTY_CONFIG[this.currentDifficultyIndex];
+    return difficultyTier?.weights ?? SPAWN_WEIGHTS as { 0: number; 1: number; 2: number; 3: number };
   }
 
   /**
@@ -25,14 +66,15 @@ export class AnimalManager {
   }
 
   /**
-   * Generate random tier based on spawn weights
+   * Generate random tier based on spawn weights (uses current difficulty)
    */
   private generateRandomTier(): number {
+    const currentWeights = this.getCurrentWeights();
     const weights: number[] = [];
     const tiers: number[] = [];
 
-    // Build weighted arrays
-    for (const [tierStr, weight] of Object.entries(SPAWN_WEIGHTS)) {
+    // Build weighted arrays from current difficulty weights
+    for (const [tierStr, weight] of Object.entries(currentWeights)) {
       const tier = parseInt(tierStr, 10);
       if (weight > 0) {
         weights.push(weight);
@@ -127,6 +169,8 @@ export class AnimalManager {
   reset(): void {
     this.clearAll();
     this.queue = [];
+    this.currentScore = 0;
+    this.currentDifficultyIndex = 0;
     this.initializeQueue();
   }
 

@@ -50,7 +50,7 @@ A physics-based merge puzzle game where players drop spherical animals from the 
 - **Result:** Game over screen with final score, high score, and restart option
 
 ### Scoring System
-- **Merge Points:** Each merge awards points based on tier created
+- **Base Merge Points:** Each merge awards points based on tier created
   - Hamster merge: 10 points
   - Cat merge: 20 points
   - Shiba merge: 50 points
@@ -61,6 +61,41 @@ A physics-based merge puzzle game where players drop spherical animals from the 
   - Big Floof disappears: 2500 bonus points
 - **Score Display:** Continuously visible during gameplay
 - **High Score:** Persists in local storage
+
+### Difficulty & Multiplier System
+Four synergistic mechanics create skill expression and high score potential:
+
+**1. Combo System (Primary)**
+- **Combo Window:** 3 seconds between merges to maintain combo
+- **Multipliers:** 1x → 1.5x → 2.0x → 2.5x → 3.0x (capped)
+- **Chain Extension:** Each chain reaction adds +1s to combo window
+- **UI:** Animated combo counter with color intensity (gray→yellow→orange→red→gold)
+
+**2. Escalating Difficulty**
+Spawn weights shift toward larger animals as score increases:
+| Score | Hamster | Cat | Shiba | Westie |
+|-------|---------|-----|-------|--------|
+| 0-999 | 50% | 30% | 15% | 5% |
+| 1000-2499 | 40% | 35% | 18% | 7% |
+| 2500-4999 | 30% | 35% | 23% | 12% |
+| 5000-9999 | 20% | 35% | 28% | 17% |
+| 10000+ | 15% | 30% | 30% | 25% |
+
+**3. Risk Zone Bonus**
+- **Risk Zone:** 40px below danger line
+- **Bonus:** 1.25x multiplier for merges in this zone
+- **Visual:** Subtle red gradient overlay shows risk zone
+
+**4. Quick Merge Bonus**
+- **Window:** 0.8 seconds after animal settles
+- **Bonus:** 1.25x multiplier
+- **Visual:** Golden glow on recently settled animals
+
+**Score Formula:**
+```
+Final Score = Base Tier Score × Combo × Risk × Quick
+Example: 50 × 2.0 × 1.25 × 1.25 = 156 points (vs 50 normally)
+```
 
 ---
 
@@ -251,6 +286,7 @@ punitto/
 │   ├── ui/
 │   │   ├── GameUI.ts          # UI overlay management
 │   │   ├── ScoreDisplay.ts
+│   │   ├── ComboDisplay.ts    # Combo counter with multiplier
 │   │   ├── Modal.ts           # Game over, settings modals
 │   │   ├── QuestToast.ts      # Quest completion notifications
 │   │   ├── AchievementScreen.ts  # Achievements UI
@@ -595,6 +631,10 @@ UI colors: Ocean blues and teals
 - [x] Container with danger line
 - [x] Game over detection and screen
 - [x] Scoring system
+- [x] Combo system with multipliers
+- [x] Escalating difficulty (dynamic spawn weights)
+- [x] Risk zone bonus near danger line
+- [x] Quick merge bonus for recently settled animals
 
 ### UI/UX ✓
 - [x] Score display (current + high score)
@@ -675,14 +715,22 @@ UI colors: Ocean blues and teals
 ```
 Drop animal →
   Physics settle →
+    Animal settles → Start quick merge timer (0.8s window)
     Merge triggered? →
-      Yes: Merge animation + points + check for chains →
+      Yes: Calculate multipliers (combo × risk × quick) →
+        → Extend combo window (+3s, +1s if chain) →
+        → Merge animation + points + bonus tags →
+        → Check for chains →
+        → Update difficulty tier if score threshold crossed →
         → Update quest progress if applicable →
       No: Wait for next drop →
     Above danger line? →
       Yes: 3-second countdown → Game Over →
         → Show quest completion summary if any →
       No: Continue
+    Combo active? →
+      Yes: Update combo display, decay timer →
+      No: Hide combo display
 ```
 
 ---
@@ -731,12 +779,12 @@ These can be added after the core game is complete and tested:
 - **More achievements:** Expand to 30+ lifetime achievements
 
 ### Phase 3 Features
-- **Combo system:** Score multiplier for consecutive merges within time window
 - **Container customization:** Unlock different container shapes/backgrounds
 - **Leaderboard:** Online high scores (requires backend)
 - **Social features:** Friend challenges, compare progress
 - **Seasonal events:** Limited-time themes and quests
 - **Sound packs:** Unlock different sound effect sets to match themes
+- **Difficulty sound effects:** Audio cues for combo, risk zone, quick merge
 
 ---
 

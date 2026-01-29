@@ -7,7 +7,24 @@ import { ScoreManager } from './ScoreManager';
 import { ThemeManager } from './ThemeManager';
 import { QuestManager } from './QuestManager';
 import { StatsTracker } from './StatsTracker';
-import { GAME_CONFIG } from '../utils/constants';
+import {
+  GAME_CONFIG,
+  COMBO_CONFIG,
+  RISK_ZONE_CONFIG,
+  QUICK_MERGE_CONFIG
+} from '../utils/constants';
+
+/**
+ * Score breakdown from a merge with multipliers
+ */
+export interface MergeScoreInfo {
+  base: number;
+  final: number;
+  comboMultiplier: number;
+  riskBonus: number;
+  quickBonus: number;
+  comboCount: number;
+}
 
 /**
  * Main game controller
@@ -32,7 +49,12 @@ export class Game {
 
   // Drop guide tracking
   private cursorX: number | null = null;
-  private onMergeCallback: ((x: number, y: number, score: number) => void) | null = null;
+  private onMergeCallback: ((x: number, y: number, scoreInfo: MergeScoreInfo) => void) | null = null;
+
+  // Combo system tracking
+  private comboCount: number = 0;
+  private comboWindowEnd: number = 0;
+  private onComboUpdateCallback: ((combo: number, multiplier: number, timeRemaining: number) => void) | null = null;
 
   // Session tracking for quests
   private sessionMerges: number = 0;
@@ -94,14 +116,96 @@ export class Game {
   }
 
   /**
-   * Set up game loop for checking danger line
+   * Set up game loop for checking danger line, combo decay, and settle tracking
    */
   private setupGameLoop(): void {
     setInterval(() => {
       if (this.isRunning) {
         this.checkDangerLine();
+        this.updateComboState();
+        this.updateAnimalSettleStates();
+        this.updateDifficultyScaling();
       }
     }, 100); // Check every 100ms
+  }
+
+  /**
+   * Update animal settle states for quick merge detection
+   */
+  private updateAnimalSettleStates(): void {
+    const animals = this.animalManager.getAllAnimals();
+    for (const animal of animals) {
+      animal.updateSettleStatus();
+    }
+  }
+
+  /**
+   * Update difficulty scaling based on current score
+   */
+  private updateDifficultyScaling(): void {
+    const currentScore = this.scoreManager.getCurrentScore();
+    this.animalManager.setCurrentScore(currentScore);
+  }
+
+  /**
+   * Update combo state and check for decay
+   */
+  private updateComboState(): void {
+    if (this.comboCount > 0) {
+      const now = Date.now();
+      const timeRemaining = Math.max(0, this.comboWindowEnd - now);
+
+      if (timeRemaining <= 0) {
+        // Combo expired
+        this.comboCount = 0;
+        console.log('💨 Combo expired!');
+      }
+
+      // Notify callback of combo state
+      if (this.onComboUpdateCallback) {
+        const multiplier = this.getComboMultiplier();
+        this.onComboUpdateCallback(this.comboCount, multiplier, timeRemaining);
+      }
+    }
+  }
+
+  /**
+   * Get current combo multiplier
+   */
+  private getComboMultiplier(): number {
+    const index = Math.min(this.comboCount, COMBO_CONFIG.MAX_COMBO);
+    return COMBO_CONFIG.MULTIPLIERS[index] ?? 1.0;
+  }
+
+  /**
+   * Extend combo timer
+   */
+  private extendCombo(isChainReaction: boolean): void {
+    const now = Date.now();
+    this.comboCount++;
+
+    // Chain reactions get extra time
+    const extension = isChainReaction ? COMBO_CONFIG.CHAIN_EXTENSION_MS : 0;
+    this.comboWindowEnd = now + COMBO_CONFIG.WINDOW_MS + extension;
+
+    const multiplier = this.getComboMultiplier();
+    console.log(`🔥 Combo ${this.comboCount}! (${multiplier}x)${isChainReaction ? ' +chain bonus' : ''}`);
+  }
+
+  /**
+   * Check if merge position is in risk zone
+   */
+  private isInRiskZone(mergeY: number): boolean {
+    const dangerLineY = this.container.getDangerLineY();
+    const riskZoneBottom = dangerLineY + RISK_ZONE_CONFIG.DEPTH;
+    return mergeY <= riskZoneBottom;
+  }
+
+  /**
+   * Check if either animal qualifies for quick merge bonus
+   */
+  private hasQuickMergeBonus(animalA: Animal, animalB: Animal): boolean {
+    return animalA.isQuickMergeEligible() || animalB.isQuickMergeEligible();
   }
 
   /**
@@ -208,7 +312,7 @@ export class Game {
   /**
    * Merge two animals
    */
-  private mergeAnimals(animalA: Animal, animalB: Animal): void {
+  private mergeAnimals(animalA: Animal, animalB: Animal, isChainReaction: boolean = false): void {
     // Verify both animals still exist
     const allAnimals = this.animalManager.getAllAnimals();
     if (!allAnimals.includes(animalA) || !allAnimals.includes(animalB)) {
@@ -223,21 +327,55 @@ export class Game {
     const mergeX = (posA.x + posB.x) / 2;
     const mergeY = (posA.y + posB.y) / 2;
 
+    // Calculate bonuses before removing animals
+    const riskBonus = this.isInRiskZone(mergeY) ? RISK_ZONE_CONFIG.BONUS_MULTIPLIER : 1.0;
+    const quickBonus = this.hasQuickMergeBonus(animalA, animalB) ? QUICK_MERGE_CONFIG.BONUS_MULTIPLIER : 1.0;
+
+    // Extend combo (before calculating multiplier so this merge counts)
+    this.extendCombo(isChainReaction);
+    const comboMultiplier = this.getComboMultiplier();
+
     // Remove both animals
     this.animalManager.removeAnimal(animalA);
     this.animalManager.removeAnimal(animalB);
 
-    // Award score for merge
-    const score = this.scoreManager.addMergeScore(tier);
+    // Award score for merge with multipliers
+    const scoreResult = this.scoreManager.addMergeScoreWithMultiplier(
+      tier,
+      comboMultiplier,
+      riskBonus,
+      quickBonus
+    );
 
     // Track merge stats
     this.sessionMerges++;
     this.statsTracker.recordMerge(tier);
-    this.statsTracker.recordScore(score);
+    this.statsTracker.recordScore(scoreResult.final);
+
+    // Track bonus stats
+    if (riskBonus > 1) {
+      this.statsTracker.recordRiskZoneMerge();
+    }
+    if (quickBonus > 1) {
+      this.statsTracker.recordQuickMerge();
+    }
+    if (this.comboCount > 1) {
+      this.statsTracker.updateMaxCombo(this.comboCount);
+    }
+
+    // Create score info for callback
+    const scoreInfo: MergeScoreInfo = {
+      base: scoreResult.base,
+      final: scoreResult.final,
+      comboMultiplier,
+      riskBonus,
+      quickBonus,
+      comboCount: this.comboCount
+    };
 
     // Trigger merge callback for score popup
     if (this.onMergeCallback) {
-      this.onMergeCallback(mergeX, mergeY, score);
+      this.onMergeCallback(mergeX, mergeY, scoreInfo);
     }
 
     // Special case: Big Floof (tier 6) merge - just disappear
@@ -247,7 +385,15 @@ export class Game {
       const bonusScore = this.scoreManager.addBigFloofDisappear();
       this.statsTracker.recordScore(bonusScore);
       if (this.onMergeCallback) {
-        this.onMergeCallback(mergeX, mergeY, bonusScore);
+        const bonusInfo: MergeScoreInfo = {
+          base: bonusScore,
+          final: bonusScore,
+          comboMultiplier: 1,
+          riskBonus: 1,
+          quickBonus: 1,
+          comboCount: this.comboCount
+        };
+        this.onMergeCallback(mergeX, mergeY, bonusInfo);
       }
       this.updateProgressTracking();
       return;
@@ -288,7 +434,8 @@ export class Game {
         if (this.currentChainCount > this.sessionMaxChain) {
           this.sessionMaxChain = this.currentChainCount;
         }
-        this.mergeAnimals(newAnimal, other);
+        // Pass true to indicate this is a chain reaction (for combo extension bonus)
+        this.mergeAnimals(newAnimal, other, true);
         break; // Only one chain at a time
       }
     }
@@ -453,6 +600,10 @@ export class Game {
     this.sessionMaxChain = 0;
     this.currentChainCount = 0;
 
+    // Reset combo state
+    this.comboCount = 0;
+    this.comboWindowEnd = 0;
+
     this.isRunning = true;
     this.physicsEngine.start();
   }
@@ -526,8 +677,36 @@ export class Game {
   /**
    * Set merge callback for score popups
    */
-  setOnMergeCallback(callback: (x: number, y: number, score: number) => void): void {
+  setOnMergeCallback(callback: (x: number, y: number, scoreInfo: MergeScoreInfo) => void): void {
     this.onMergeCallback = callback;
+  }
+
+  /**
+   * Set combo update callback
+   */
+  setOnComboUpdateCallback(callback: (combo: number, multiplier: number, timeRemaining: number) => void): void {
+    this.onComboUpdateCallback = callback;
+  }
+
+  /**
+   * Get current combo count
+   */
+  getComboCount(): number {
+    return this.comboCount;
+  }
+
+  /**
+   * Get current difficulty tier (for UI display)
+   */
+  getDifficultyTier(): number {
+    return this.animalManager.getDifficultyTier();
+  }
+
+  /**
+   * Get danger line Y position (for risk zone calculations)
+   */
+  getDangerLineY(): number {
+    return this.container.getDangerLineY();
   }
 
   /**

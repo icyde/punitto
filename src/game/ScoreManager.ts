@@ -64,6 +64,45 @@ export class ScoreManager {
   }
 
   /**
+   * Add points for a merge with multipliers
+   * @returns Object with base points, final points, and multiplier breakdown
+   */
+  addMergeScoreWithMultiplier(
+    tier: number,
+    comboMultiplier: number,
+    riskBonus: number,
+    quickBonus: number
+  ): { base: number; final: number; combo: number; risk: number; quick: number } {
+    const tierData = ANIMAL_TIERS[tier];
+    if (!tierData) return { base: 0, final: 0, combo: 1, risk: 1, quick: 1 };
+
+    const basePoints = tierData.score;
+    const finalPoints = Math.round(basePoints * comboMultiplier * riskBonus * quickBonus);
+
+    this.currentScore += finalPoints;
+
+    // Check for new high score
+    if (this.currentScore > this.highScore) {
+      this.highScore = this.currentScore;
+      this.isNewHighScore = true;
+      setHighScore(this.highScore);
+    }
+
+    const multiplierStr = comboMultiplier > 1 || riskBonus > 1 || quickBonus > 1
+      ? ` (${comboMultiplier.toFixed(1)}x × ${riskBonus.toFixed(2)}x × ${quickBonus.toFixed(2)}x)`
+      : '';
+    console.log(`+${finalPoints} points${multiplierStr}! Total: ${this.currentScore}`);
+
+    return {
+      base: basePoints,
+      final: finalPoints,
+      combo: comboMultiplier,
+      risk: riskBonus,
+      quick: quickBonus
+    };
+  }
+
+  /**
    * Add points for Big Floof disappear
    * @returns The bonus points awarded
    */

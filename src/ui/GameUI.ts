@@ -3,7 +3,8 @@ import { ProgressionWheel } from './ProgressionWheel';
 import { Modal } from './Modal';
 import { AchievementScreen } from './AchievementScreen';
 import { ThemeSelector } from './ThemeSelector';
-import { Game } from '../game/Game';
+import { ComboDisplay } from './ComboDisplay';
+import { Game, MergeScoreInfo } from '../game/Game';
 import { GAME_CONFIG, COLORS } from '../utils/constants';
 
 /**
@@ -21,6 +22,7 @@ export class GameUI {
   private modal: Modal;
   private achievementScreen: AchievementScreen;
   private themeSelector: ThemeSelector;
+  private comboDisplay: ComboDisplay;
   private dangerLineEl: HTMLDivElement | null = null;
 
   constructor(game: Game, canvas: HTMLCanvasElement) {
@@ -33,6 +35,7 @@ export class GameUI {
       this.game.getThemeManager()
     );
     this.modal = new Modal();
+    this.comboDisplay = new ComboDisplay(this.container);
 
     // Initialize achievement and theme screens
     const questManager = this.game.getQuestManager();
@@ -55,6 +58,7 @@ export class GameUI {
 
     this.setupGameOverCallback();
     this.setupMergeCallback();
+    this.setupComboCallback();
     this.createDangerLine();
     this.createAchievementButton();
     this.syncOverlayToCanvas();
@@ -184,6 +188,7 @@ export class GameUI {
       this.modal.showGameOver(score, highScore, isNewHigh, () => {
         this.game.reset();
         this.progressionWheel.reset();
+        this.comboDisplay.reset();
       });
     });
   }
@@ -192,29 +197,57 @@ export class GameUI {
    * Set up merge callback for score popups
    */
   private setupMergeCallback(): void {
-    this.game.setOnMergeCallback((x, y, score) => {
-      this.showScorePopup(x, y, score);
+    this.game.setOnMergeCallback((x, y, scoreInfo) => {
+      this.showScorePopup(x, y, scoreInfo);
     });
   }
 
   /**
-   * Show floating score popup
+   * Set up combo update callback
    */
-  private showScorePopup(x: number, y: number, score: number): void {
+  private setupComboCallback(): void {
+    this.game.setOnComboUpdateCallback((combo, multiplier, timeRemaining) => {
+      this.comboDisplay.update(combo, multiplier, timeRemaining);
+    });
+  }
+
+  /**
+   * Show floating score popup with multiplier info
+   */
+  private showScorePopup(x: number, y: number, scoreInfo: MergeScoreInfo): void {
     const scaledX = x * this.scaleX;
     const scaledY = y * this.scaleY;
 
+    const hasBonus = scoreInfo.comboMultiplier > 1 || scoreInfo.riskBonus > 1 || scoreInfo.quickBonus > 1;
+    const bonusClass = this.getPopupBonusClass(scoreInfo);
+
     const popup = document.createElement('div');
-    popup.className = 'score-popup';
-    popup.textContent = `+${score}`;
+    popup.className = `score-popup ${bonusClass}`;
+
+    // Build popup content
+    let content = `+${scoreInfo.final}`;
+    if (hasBonus) {
+      const bonusTags: string[] = [];
+      if (scoreInfo.comboMultiplier > 1) {
+        bonusTags.push(`<span class="bonus-tag combo-tag">${scoreInfo.comboMultiplier.toFixed(1)}x</span>`);
+      }
+      if (scoreInfo.riskBonus > 1) {
+        bonusTags.push(`<span class="bonus-tag risk-tag">RISK</span>`);
+      }
+      if (scoreInfo.quickBonus > 1) {
+        bonusTags.push(`<span class="bonus-tag quick-tag">QUICK</span>`);
+      }
+      content = `
+        <span class="score-value">+${scoreInfo.final}</span>
+        <span class="bonus-tags">${bonusTags.join('')}</span>
+      `;
+    }
+
+    popup.innerHTML = content;
     popup.style.cssText = `
       position: absolute;
       left: ${scaledX}px;
       top: ${scaledY}px;
-      font-size: 20px;
-      font-weight: 700;
-      color: #FF9EAA;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
       pointer-events: none;
       transform: translate(-50%, -50%);
       animation: scorePopup 0.8s ease-out forwards;
@@ -227,6 +260,27 @@ export class GameUI {
     setTimeout(() => {
       popup.remove();
     }, 800);
+  }
+
+  /**
+   * Get CSS class for popup based on bonuses
+   */
+  private getPopupBonusClass(scoreInfo: MergeScoreInfo): string {
+    const classes: string[] = [];
+    if (scoreInfo.comboMultiplier >= 2.5) {
+      classes.push('popup-mega');
+    } else if (scoreInfo.comboMultiplier >= 2) {
+      classes.push('popup-super');
+    } else if (scoreInfo.comboMultiplier > 1) {
+      classes.push('popup-combo');
+    }
+    if (scoreInfo.riskBonus > 1) {
+      classes.push('popup-risk');
+    }
+    if (scoreInfo.quickBonus > 1) {
+      classes.push('popup-quick');
+    }
+    return classes.join(' ');
   }
 
   /**
