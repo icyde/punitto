@@ -8,7 +8,6 @@ export type AchievementType =
   | 'total_merges'
   | 'animals_created'
   | 'chain_reactions'
-  | 'big_floofs'
   | 'total_score'
   | 'highest_tier';
 
@@ -41,8 +40,9 @@ export const ACHIEVEMENTS: Achievement[] = [
     id: 'ach_baby_floof',
     name: 'Baby Floof',
     description: 'Create your first Big Floof',
-    type: 'big_floofs',
+    type: 'animals_created',
     target: 1,
+    tier: 6,
     stars: 1,
     difficulty: 1
   },
@@ -130,8 +130,9 @@ export const ACHIEVEMENTS: Achievement[] = [
     id: 'ach_floof_master',
     name: 'Floof Master',
     description: 'Create 10 Big Floofs',
-    type: 'big_floofs',
+    type: 'animals_created',
     target: 10,
+    tier: 6,
     stars: 5,
     difficulty: 3
   },

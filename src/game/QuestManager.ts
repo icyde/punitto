@@ -199,9 +199,6 @@ export class QuestManager {
         case 'chain_reactions':
           isCompleted = stats.chainReactions >= achievement.target;
           break;
-        case 'big_floofs':
-          isCompleted = stats.bigFloofsMerged >= achievement.target;
-          break;
         case 'total_score':
           isCompleted = stats.totalScore >= achievement.target;
           break;

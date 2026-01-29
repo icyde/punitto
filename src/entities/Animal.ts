@@ -111,9 +111,10 @@ export class Animal {
 
   /**
    * Check if this animal can merge with another
+   * Big Floofs (tier 6) can merge too - they disappear instead of creating a new tier
    */
   canMergeWith(other: Animal): boolean {
-    return this.tier === other.getTier() && this.tier < 6; // Same tier and not max tier
+    return this.tier === other.getTier();
   }
 
   /**
