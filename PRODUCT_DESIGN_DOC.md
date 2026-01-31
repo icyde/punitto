@@ -15,16 +15,17 @@
 ### High-Level Concept
 A physics-based merge puzzle game where players drop spherical animals from the top of a container. When two identical animals touch, they merge into the next tier animal. The game ends when animals overflow past the danger line at the top.
 
-### Animal Progression Chain (7 Tiers)
+### Animal Progression Chain (8 Tiers)
 1. **Hamster** (Smallest) - Tiny, brown/beige
 2. **Cat** - White/calico with pink accents
 3. **Shiba** - Orange/cream, classic doge face
 4. **Westie** - Pure white, perky ears, fluffy
 5. **Husky** - Grey/white with blue eyes
 6. **Golden** - Golden Retriever, fluffy and friendly
-7. **Big Floof** (Largest) - Ultimate fluff ball (rainbow pastel shimmer)
+7. **Big Floof** - Ultimate fluff ball (rainbow pastel shimmer)
+8. **Angel** (Largest) - Heavenly winged guardian with ethereal glow
 
-**Special Rule:** When two Big Floofs merge, they disappear from the container with a magical sparkle effect and award massive bonus points, creating valuable space.
+**Special Rule:** When two Angels merge, they disappear from the container with a magical sparkle effect and award massive bonus points (5000), creating valuable space.
 
 ---
 
@@ -58,7 +59,8 @@ A physics-based merge puzzle game where players drop spherical animals from the 
   - Husky merge: 200 points
   - Golden merge: 500 points
   - Big Floof merge: 1000 points
-  - Big Floof disappears: 2500 bonus points
+  - Angel merge: 2500 points
+  - Angel disappears: 5000 bonus points
 - **Score Display:** Continuously visible during gameplay
 - **High Score:** Persists in local storage
 
@@ -427,7 +429,7 @@ Quests give players short and long-term goals beyond high scores, creating engag
 ### Theme System
 
 **What is a Theme?**
-A complete reskin of all 7 animals with a cohesive aesthetic. Container and UI colors also adjust to match theme.
+A complete reskin of all 8 animals with a cohesive aesthetic. Container and UI colors also adjust to match theme.
 
 **MVP Theme: Ocean Dreams (10 stars to unlock)**
 
@@ -541,10 +543,10 @@ UI colors: Ocean blues and teals
 
    OCEAN DREAMS
 
-   [Preview showing all 7 ocean animals]
+   [Preview showing all 8 ocean animals]
 
    Seahorse → Jellyfish → Clownfish →
-   Pufferfish → Dolphin → Orca → Ocean Spirit
+   Pufferfish → Dolphin → Orca → Ocean Spirit → Celestial Guardian
 
    [TRY IT NOW]  [LATER]
    ```
@@ -627,7 +629,7 @@ UI colors: Ocean blues and teals
 ### Core Gameplay ✓
 - [x] Physics-based animal dropping
 - [x] Merge mechanic (2 identical → next tier)
-- [x] 7-tier animal progression
+- [x] 8-tier animal progression
 - [x] Container with danger line
 - [x] Game over detection and screen
 - [x] Scoring system
@@ -647,7 +649,7 @@ UI colors: Ocean blues and teals
 ### Audio ✓
 - [x] Drop sound effects
 - [x] Merge sound effects (tier-specific)
-- [x] Big Floof disappear special sound
+- [x] Angel disappear special sound
 - [x] Background music (looping)
 - [x] Sound toggle controls
 
@@ -804,7 +806,7 @@ These can be added after the core game is complete and tested:
 - Stats tracking system
 
 **Week 3: Visual Design (Pastel Paws Theme)**
-- Create/source animal sprites (7 tiers)
+- Create/source animal sprites (8 tiers)
 - UI design and implementation
 - Animations and particle effects
 - Responsive layout
@@ -818,7 +820,7 @@ These can be added after the core game is complete and tested:
 - Quest toast notifications
 
 **Week 5: Ocean Dreams Theme**
-- Create/source ocean animal sprites (7 tiers)
+- Create/source ocean animal sprites (8 tiers)
 - Theme unlock celebration modal
 - Theme switching logic
 - Test both themes thoroughly
@@ -848,7 +850,7 @@ These can be added after the core game is complete and tested:
 - **Design:** Perfect circle with cute face
 - **Variations:** Optional - slightly different expressions (happy when merged, worried near danger)
 
-**Total Sprites Needed for MVP:** 14 animals (7 for Pastel Paws theme + 7 for Ocean Dreams theme)
+**Total Sprites Needed for MVP:** 16 animals (8 for Pastel Paws theme + 8 for Ocean Dreams theme)
 
 ---
 
@@ -889,6 +891,11 @@ These can be added after the core game is complete and tested:
 - Color: Pastel rainbow shimmer (#FFB6C1 → #E6E6FA → #B0E0E6)
 - Features: Maximum fluff, sparkle effects, otherworldly
 
+**Tier 8 - Angel:**
+- Size multiplier: 4.0x
+- Color: Heavenly gold with ethereal white glow (#FFFACD)
+- Features: Glowing halo, translucent wings, celestial aura, soft light trails
+
 ---
 
 ### Theme 2: Ocean Dreams (Unlockable - 10 stars)
@@ -927,6 +934,11 @@ These can be added after the core game is complete and tested:
 - Size multiplier: 3.5x
 - Color: Ethereal blue/purple/teal shimmer (#4682B4 → #9370DB → #20B2AA)
 - Features: Flowing water-like texture, sparkles, mystical aura, hints of all previous ocean creatures
+
+**Tier 8 - Celestial Guardian:**
+- Size multiplier: 4.0x
+- Color: Iridescent bioluminescent gradient (#87CEEB → #20B2AA → #4169E1)
+- Features: Luminous wings of pure light, divine halo, celestial aura, underwater aurora effect
 
 ---
 
